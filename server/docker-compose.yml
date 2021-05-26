@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   main:
-    container_name: misa-screen-sharing
+    container_name: misa-room
     build:
       context: .
       dockerfile: ./Dockerfile
@@ -24,7 +24,7 @@ services:
       - common
 
   redis:
-    container_name: misa-screen-sharing-redis
+    container_name: misa-room-redis
     image: redis:6.2.3-alpine
     ports:
       - 6380:6379
