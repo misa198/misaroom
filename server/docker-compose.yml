@@ -1,0 +1,30 @@
+version: '3.9'
+
+services:
+  node:
+    container_name: misa-screen-sharing
+    # image: misa198/misa-screen-sharing
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    command: yarn start
+    networks:
+      - common
+    environment:
+      ENV: 'production'
+      APP_PORT: 8080
+      REDIS_HOST: 0.0.0.0
+      REDIS_PORT: 6380
+    expose:
+      - 8080
+
+  redis:
+    container_name: misa-screen-sharing-redis
+    image: redis
+    ports:
+      - 6380:6379
+    networks:
+      - common
+
+networks:
+  common:
