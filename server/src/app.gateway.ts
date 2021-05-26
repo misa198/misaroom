@@ -1,4 +1,6 @@
 import {
+  OnGatewayConnection,
+  OnGatewayDisconnect,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
@@ -14,23 +16,26 @@ import { Wss } from './types/wss';
 
 import { avatars } from './constants/avatar';
 
-@WebSocketGateway()
-export class AppGateway {
+@WebSocketGateway({})
+export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(readonly redisCacheService: RedisCacheService) {}
-
   @WebSocketServer()
   private wss: Wss;
 
   @SubscribeMessage('create-room')
   async handleCreateRoom(client: Socket, payload: CreateRoomDto) {
-    const roomId = this.generateRoomId();
-    await this.redisCacheService.set(
+    const roomId = await this.generateRoomId();
+    this.redisCacheService.set(
       roomId,
       JSON.stringify({
-        password: payload.password,
+        password: payload.password || '',
         creator: client.id,
+        users: [],
       }),
     );
+    client.emit('create-room-successfully', {
+      roomId,
+    });
   }
 
   @SubscribeMessage('join-room')
@@ -39,7 +44,11 @@ export class AppGateway {
     const room = JSON.parse(
       await this.redisCacheService.get(roomId),
     ) as RoomDetails;
-    if (!room) client.emit('join-room-fail', 'Not found!');
+    console.log(room);
+    if (!room)
+      client.emit('join-room-fail', {
+        message: 'Not found!',
+      });
     else if (
       (room.password && room.creator !== client.id) ||
       (room.password !== password && room.creator !== client.id)
@@ -55,17 +64,25 @@ export class AppGateway {
       await this.redisCacheService.set(roomId, JSON.stringify(room));
       client.emit('join-room-successfully', {
         users: room.users,
-        avatar,
       });
     }
   }
 
-  private generateRoomId() {
+  handleDisconnect(client: Socket) {
+    console.log(client.rooms);
+  }
+
+  handleConnection(client: Socket) {
+    console.log(client.id);
+    client.emit('connected');
+  }
+
+  private async generateRoomId() {
     let isOk = false;
     let roomId = '';
     while (!isOk) {
       roomId = nanoid(32);
-      const room = this.redisCacheService.get(roomId);
+      const room = await this.redisCacheService.get(roomId);
       if (!room) isOk = true;
     }
     return roomId;

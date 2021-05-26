@@ -1,7 +1,6 @@
 import { Module, CacheModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as redisStore from 'cache-manager-redis-store';
-// import { RedisCacheService } from './redisCache.service';
 import { RedisCacheService } from './redis-cache.service';
 
 @Module({
@@ -13,11 +12,11 @@ import { RedisCacheService } from './redis-cache.service';
         store: redisStore,
         host: configService.get(process.env.REDIS_HOST),
         port: configService.get(process.env.REDIS_PORT),
+        ttl: configService.get('CACHE_TTL'),
       }),
     }),
   ],
   providers: [RedisCacheService],
-  // providers: [RedisCacheService],
-  // exports: [RedisCacheService], // This is IMPORTANT,  you need to export RedisCacheService here so that other modules can use it
+  exports: [RedisCacheService],
 })
 export class RedisCacheModule {}
