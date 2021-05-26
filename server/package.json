@@ -4,7 +4,7 @@
   "description": "",
   "author": "",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
@@ -34,8 +34,7 @@
     "redis": "^3.1.2",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
-    "rxjs": "^6.6.6",
-    "socket.io-redis": "^6.1.1"
+    "rxjs": "^6.6.6"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.6.0",
