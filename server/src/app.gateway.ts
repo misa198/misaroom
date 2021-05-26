@@ -44,7 +44,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const room = JSON.parse(
       await this.redisCacheService.get(roomId),
     ) as RoomDetails;
-    console.log(room);
+
     if (!room)
       client.emit('join-room-fail', {
         message: 'Not found!',
@@ -68,12 +68,9 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
   }
 
-  handleDisconnect(client: Socket) {
-    console.log(client.rooms);
-  }
+  handleDisconnect(client: Socket) {}
 
   handleConnection(client: Socket) {
-    console.log(client.id);
     client.emit('connected');
   }
 
