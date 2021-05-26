@@ -1,6 +1,3 @@
-FROM redis
-COPY redis.conf /usr/local/etc/redis/redis.conf
-
 FROM node:lts-alpine
 
 WORKDIR /app
