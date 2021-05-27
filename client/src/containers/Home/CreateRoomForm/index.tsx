@@ -13,11 +13,6 @@ import {
   BasicFormButton,
 } from "../../../components/BasicForm/styed";
 
-interface Values {
-  name: string;
-  password: string;
-}
-
 const schema = yup.object().shape({
   name: yup.string().required(),
   password: yup.string().nullable(),
