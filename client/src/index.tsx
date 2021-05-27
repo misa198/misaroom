@@ -1,14 +1,19 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import App from "./App";
+import { Provider } from "react-redux";
 import reportWebVitals from "./reportWebVitals";
 
+import App from "./App";
 import GlobalStyle from "./shared/styles/GlobalStyled";
+
+import store from "./store";
 
 ReactDOM.render(
   <React.StrictMode>
-    <GlobalStyle />
-    <App />
+    <Provider store={store}>
+      <GlobalStyle />
+      <App />
+    </Provider>
   </React.StrictMode>,
   document.getElementById("misa-room")
 );
