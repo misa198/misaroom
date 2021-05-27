@@ -10,6 +10,8 @@ export default createGlobalStyle`
   body {
     background-color: rgb(34, 31, 36);
     color: #ffffff;
+    font-family: "Source Sans Pro", serif;
+    font-size: 16px;
 
     ::-webkit-scrollbar {
       display: none;
