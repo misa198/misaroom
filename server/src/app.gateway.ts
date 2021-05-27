@@ -1,3 +1,4 @@
+import { UsePipes } from '@nestjs/common';
 import {
   OnGatewayConnection,
   OnGatewayDisconnect,
@@ -14,6 +15,8 @@ import { RedisCacheService } from './redis-cache/redis-cache.service';
 import { RoomDetails } from './types/roomDetails';
 
 import { avatars } from './constants/avatar';
+import { CreateRoomValidationPipe } from './pipes/create-room-validation.pipe';
+import { JoinRoomValidationPipe } from './pipes/join-room-validation.pipe';
 
 @WebSocketGateway({})
 export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -22,6 +25,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private wss: Server;
 
   @SubscribeMessage('create-room')
+  @UsePipes(new CreateRoomValidationPipe())
   async handleCreateRoom(client: Socket, payload: CreateRoomDto) {
     const roomId = await this.generateRoomId();
     this.redisCacheService.set(
@@ -38,6 +42,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('join-room')
+  @UsePipes(new JoinRoomValidationPipe())
   async handleJoinRoom(client: Socket, payload: JoinRoom) {
     const { roomId, name, password } = payload;
     const room = JSON.parse(
