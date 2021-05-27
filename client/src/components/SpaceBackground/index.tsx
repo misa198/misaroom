@@ -9,7 +9,7 @@ const SpaceBackground: FC = () => {
   const [starAmount, setStarAmount] = useState<number>(0);
 
   useEffect(() => {
-    let about = Math.round(width / 19);
+    let about = Math.round(width / 15);
     about = about < 100 ? about : 100;
     setStarAmount(about);
   }, [width]);
