@@ -31,8 +31,9 @@
   },
   "rules": {
     "linebreak-style": "off",
-    "import/prefer-default-export": 0,
+    "import/prefer-default-export": "off",
     "react/react-in-jsx-scope": "off",
+    "react/jsx-props-no-spreading": "off",
     "prettier/prettier": [
       "error",
       {

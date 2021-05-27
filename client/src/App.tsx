@@ -13,6 +13,7 @@ const App: FC = () => {
               component={route.component}
               exact={route.exact}
               path={route.path}
+              key={route.path}
             />
           ))}
         </Switch>
