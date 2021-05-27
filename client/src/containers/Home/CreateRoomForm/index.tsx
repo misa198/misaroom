@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { useEffect, FC } from "react";
 import { useHistory } from "react-router-dom";
 import * as yup from "yup";
 
@@ -14,12 +14,22 @@ import {
   BasicFormButton,
 } from "../../../components/BasicForm/styed";
 
+import { socket } from "../../../shared/socket/SocketProvider";
+
 const schema = yup.object().shape({
   name: yup.string().required(),
   password: yup.string().nullable(),
 });
 
 const CreateRoomForm: FC = () => {
+  const history = useHistory();
+
+  useEffect(() => {
+    socket.on("create-room-successfully", (values) => {
+      history.push(`/r/${values.roomId}`);
+    });
+  }, [history]);
+
   return (
     <BasicFormOutsideBorder>
       <BasicFormWrapper>
@@ -28,7 +38,9 @@ const CreateRoomForm: FC = () => {
           initialValues={{ name: "", password: "" }}
           validationSchema={schema}
           onSubmit={(values) => {
-            console.log(values);
+            socket.emit("create-room", {
+              password: values.password,
+            });
           }}
         >
           {({ errors, touched }) => (
