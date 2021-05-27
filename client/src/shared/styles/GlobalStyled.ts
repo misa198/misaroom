@@ -9,5 +9,10 @@ export default createGlobalStyle`
 
   body {
     background-color: rgb(34, 31, 36);
+    color: #ffffff;
+
+    ::-webkit-scrollbar {
+      display: none;
+    }
   }
 `;
