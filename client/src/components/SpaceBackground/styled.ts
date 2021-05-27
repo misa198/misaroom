@@ -66,8 +66,8 @@ export const RightLeg = styled.div`
   position: absolute;
   left: 4vmin;
   top: 28vmin;
-  width: 11vmin;
-  height: 11vmin;
+  width: 9vmin;
+  height: 9vmin;
   background: radial-gradient(ellipse at 20% 70%, #0c9fc4 15%, #fff0 15%),
     radial-gradient(ellipse at 0% 29%, #fff0 40%, #0c9fc4 40%);
   background-repeat: no-repeat;
@@ -80,8 +80,8 @@ export const LeftLef = styled.div`
   position: absolute;
   left: 1vmin;
   top: 25vmin;
-  width: 11vmin;
-  height: 11vmin;
+  width: 8vmin;
+  height: 8vmin;
   background: radial-gradient(ellipse at 20% 70%, #0c9fc4 15%, #fff0 15%),
     radial-gradient(ellipse at 0% 29%, #fff0 40%, #0c9fc4 40%);
   background-repeat: no-repeat;
