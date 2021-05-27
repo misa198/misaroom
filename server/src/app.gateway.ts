@@ -100,6 +100,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   handleConnection(client: Socket) {
+    client.emit('connected');
     this.redisCacheService.set(client.id, JSON.stringify([]));
   }
 
