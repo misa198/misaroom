@@ -2,7 +2,16 @@ import { FC, useEffect, useState } from "react";
 import useResizeObserver from "use-resize-observer";
 import { nanoid } from "nanoid";
 
-import { Sky, Star } from "./styled";
+import {
+  Sky,
+  Star,
+  Boi,
+  RightLeg,
+  LeftLef,
+  BackPack,
+  Belly,
+  Eye,
+} from "./styled";
 
 const SpaceBackground: FC = () => {
   const { ref, width = 0 } = useResizeObserver<HTMLDivElement>();
@@ -20,6 +29,13 @@ const SpaceBackground: FC = () => {
       {Array.from(Array(starAmount).keys()).map(() => (
         <Star key={`star_${nanoid(10)}`} />
       ))}
+      <Boi>
+        <RightLeg />
+        <BackPack />
+        <Belly />
+        <Eye />
+        <LeftLef />
+      </Boi>
     </Sky>
   );
 };
