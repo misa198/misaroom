@@ -1,5 +1,6 @@
 import { createContext, useEffect, useState, FC, ReactNode } from "react";
 import { io, Socket } from "socket.io-client";
+import { toast } from "react-toastify";
 
 import { apiUrl } from "../constants/url";
 
@@ -20,6 +21,12 @@ const SocketProvider: FC<PropTypes> = ({ children }: PropTypes) => {
     socket.on("connected", () => {
       setConnected(true);
     });
+
+    socket.on("exception", (value) => {
+      toast(value.message, {
+        type: "error",
+      });
+    });
   }, []);
 
   return (
@@ -29,4 +36,4 @@ const SocketProvider: FC<PropTypes> = ({ children }: PropTypes) => {
   );
 };
 
-export { SocketContext, SocketProvider };
+export { SocketContext, SocketProvider, socket };
