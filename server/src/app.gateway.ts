@@ -53,11 +53,15 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       client.emit('join-room-fail', {
         message: 'Not found!',
       });
-    else if (
-      (room.password && room.creator !== client.id) ||
-      (room.password !== password && room.creator !== client.id)
-    ) {
+    else if (room.password && room.creator !== client.id && !password) {
       client.emit('require-password');
+    } else if (
+      room.password &&
+      room.creator !== client.id &&
+      password &&
+      password != room.password
+    ) {
+      client.emit('wrong-password');
     } else {
       const avatar = this.randomAvatar();
       room.users.push({
