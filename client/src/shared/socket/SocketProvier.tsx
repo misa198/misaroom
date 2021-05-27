@@ -1,8 +1,8 @@
-import { createContext, useEffect, useState, FC, ReactNode } from "react";
-import { io, Socket } from "socket.io-client";
+import { useEffect, useState, FC, ReactNode } from "react";
+import { io } from "socket.io-client";
 import { toast } from "react-toastify";
 
-import { apiUrl } from "../constants/url";
+import { apiUrl } from "../../constants/url";
 
 interface PropTypes {
   children: ReactNode;
@@ -11,8 +11,6 @@ interface PropTypes {
 const socket = io(apiUrl, {
   transports: ["websocket"],
 }).connect();
-
-const SocketContext = createContext<Socket>(socket);
 
 const SocketProvider: FC<PropTypes> = ({ children }: PropTypes) => {
   const [connected, setConnected] = useState(false);
@@ -29,11 +27,8 @@ const SocketProvider: FC<PropTypes> = ({ children }: PropTypes) => {
     });
   }, []);
 
-  return (
-    <SocketContext.Provider value={socket}>
-      {connected ? children : null}
-    </SocketContext.Provider>
-  );
+  return <> {connected ? children : <>Loading</>}</>;
 };
 
-export { SocketContext, SocketProvider, socket };
+export { socket };
+export default SocketProvider;
