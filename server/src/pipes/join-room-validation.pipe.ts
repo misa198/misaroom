@@ -9,7 +9,7 @@ export class JoinRoomValidationPipe implements PipeTransform {
       return values;
     } else {
       const schema = joi.object({
-        password: joi.string(),
+        password: joi.string().allow(null, ''),
         roomId: joi.string().length(32).required(),
         name: joi.string().required(),
       });

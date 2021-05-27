@@ -9,7 +9,7 @@ export class CreateRoomValidationPipe implements PipeTransform {
       return values;
     } else {
       const schema = joi.object({
-        password: joi.string(),
+        password: joi.string().allow(null, ''),
       });
       const { error, value } = schema.validate(values);
       if (!value)
