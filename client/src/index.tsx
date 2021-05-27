@@ -8,11 +8,15 @@ import GlobalStyle from "./shared/styles/GlobalStyled";
 
 import store from "./store";
 
+import { SocketProvider } from "./contexts/socket.context";
+
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <GlobalStyle />
-      <App />
+      <SocketProvider>
+        <GlobalStyle />
+        <App />
+      </SocketProvider>
     </Provider>
   </React.StrictMode>,
   document.getElementById("misa-room")
