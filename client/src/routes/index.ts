@@ -6,4 +6,9 @@ export const routes = [
     exact: true,
     component: lazy(() => import("../containers/Home")),
   },
+  {
+    path: "/r",
+    exact: false,
+    component: lazy(() => import("../containers/Room")),
+  },
 ];
