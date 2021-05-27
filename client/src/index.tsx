@@ -1,6 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import reportWebVitals from "./reportWebVitals";
 
 import App from "./App";
@@ -18,6 +21,7 @@ ReactDOM.render(
         <App />
       </SocketProvider>
     </Provider>
+    <ToastContainer />
   </React.StrictMode>,
   document.getElementById("misa-room")
 );
