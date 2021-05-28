@@ -1,4 +1,5 @@
 import { FC } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Tooltip from "react-tooltip";
 import { Mic, Camera, Phone, Monitor, MessageSquare } from "react-feather";
 
@@ -8,11 +9,24 @@ import {
   ControlBarButton,
 } from "./styled";
 
+import { RootState } from "../../../../store";
+
+import { changeChatStatus as changeChatStatusAction } from "../../../../store/slice/room.slice";
+
 interface PropTypes {
   showControlBar: boolean;
 }
 
 const ControlBar: FC<PropTypes> = ({ showControlBar }: PropTypes) => {
+  const dispatch = useDispatch();
+  const showChat = useSelector(
+    (state: RootState) => state.room.status.showChat
+  );
+
+  function changeChatStatus(): void {
+    dispatch(changeChatStatusAction());
+  }
+
   return (
     <ControlBarWrapper showControlBar={showControlBar}>
       <ControlBarContainer>
@@ -28,7 +42,11 @@ const ControlBar: FC<PropTypes> = ({ showControlBar }: PropTypes) => {
           <Mic />
         </ControlBarButton>
         <Tooltip place="top" type="dark" effect="solid" />
-        <ControlBarButton active data-tip="Chat">
+        <ControlBarButton
+          active={showChat}
+          data-tip="Chat"
+          onClick={changeChatStatus}
+        >
           <MessageSquare />
         </ControlBarButton>
         <Tooltip place="top" type="dark" effect="solid" />

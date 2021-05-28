@@ -37,8 +37,8 @@ const CallLayoutItem: FC = () => {
           src="http://vjs.zencdn.net/v/oceans.mp4"
         />
       </CallLayoutItemVideoWrapper>
-      <CallLayoutItemNameWrapper data-tip="Misa198">
-        <CallLayoutItemName>Misa198</CallLayoutItemName>
+      <CallLayoutItemNameWrapper data-tip="Thanh Vu">
+        <CallLayoutItemName>Thanh Vu</CallLayoutItemName>
         <CallLayoutItemNameMic>
           <Mic size={14} />
         </CallLayoutItemNameMic>
