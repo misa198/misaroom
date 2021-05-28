@@ -96,8 +96,8 @@ export const CallLayoutItemVideoWrapper = styled.div<{
 `;
 
 export const CallLayoutItemVideo = styled.video`
-  width: auto;
-  height: auto;
+  width: 100%;
+  height: 100%;
   max-width: 100%;
   max-height: 100%;
   transform: rotateY(180deg);
