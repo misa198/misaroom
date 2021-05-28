@@ -27,6 +27,10 @@ const ControlBar: FC<PropTypes> = ({ showControlBar }: PropTypes) => {
     dispatch(changeChatStatusAction());
   }
 
+  function endRoom(): void {
+    window.location.href = "/";
+  }
+
   return (
     <ControlBarWrapper showControlBar={showControlBar}>
       <ControlBarContainer>
@@ -51,7 +55,7 @@ const ControlBar: FC<PropTypes> = ({ showControlBar }: PropTypes) => {
         </ControlBarButton>
         <Tooltip place="top" type="dark" effect="solid" />
         <ControlBarButton active={false} call data-tip="End">
-          <Phone />
+          <Phone onClick={endRoom} />
         </ControlBarButton>
         <Tooltip place="top" type="dark" effect="solid" />
       </ControlBarContainer>
