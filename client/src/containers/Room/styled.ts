@@ -18,3 +18,9 @@ export const RoomOverlay = styled.div`
   justify-content: center;
   align-items: center;
 `;
+
+export const RoomContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+`;

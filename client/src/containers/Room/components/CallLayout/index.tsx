@@ -1,27 +1,23 @@
 import { useState, FC, useEffect } from "react";
+import { useSelector } from "react-redux";
 
 import { CallLayoutWrapper } from "./styled";
 
 import CallLayoutItem from "../CallLayoutItem";
 import ControlBar from "../ControlBar";
 
+import { RootState } from "../../../../store";
+
 import { calLayout, Layout } from "../../../../shared/cal-layout/cal-layout";
 
-import { User } from "../../../../types/User";
-
-interface PropTypes {
-  users: User[];
-}
-
-const amount = 6;
-
-const CallLayout: FC<PropTypes> = ({ users }: PropTypes) => {
+const CallLayout: FC = () => {
+  const users = useSelector((state: RootState) => state.room.users);
   const [layout, setLayout] = useState<Layout>({ columns: 0, rows: 0 });
   const [showControlBar, setShowControlBar] = useState<boolean>(false);
 
   useEffect(() => {
-    setLayout(calLayout(amount));
-  }, []);
+    setLayout(calLayout(users.length));
+  }, [users.length]);
 
   useEffect((): any => {
     if (showControlBar) {
@@ -40,8 +36,8 @@ const CallLayout: FC<PropTypes> = ({ users }: PropTypes) => {
 
   return (
     <CallLayoutWrapper layout={layout} onMouseMove={changeControlBar}>
-      {Array.from(Array(amount).keys()).map((_, index) => (
-        <CallLayoutItem key={index.toFixed()} />
+      {users.map((user, index) => (
+        <CallLayoutItem user={user} key={`user_${index.toFixed()}`} />
       ))}
       <ControlBar showControlBar={showControlBar} />
     </CallLayoutWrapper>

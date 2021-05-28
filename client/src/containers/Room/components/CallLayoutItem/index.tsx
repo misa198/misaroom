@@ -16,7 +16,13 @@ import {
   CallLayoutItemVideo,
 } from "./styled";
 
-const CallLayoutItem: FC = () => {
+import { User } from "../../../../types/User";
+
+interface PropTypes {
+  user: User;
+}
+
+const CallLayoutItem: FC<PropTypes> = ({ user }: PropTypes) => {
   const { ref, width = 0, height = 0 } = useResize();
   const [video, setVideo] = useState(false);
 
@@ -25,7 +31,7 @@ const CallLayoutItem: FC = () => {
       <CallLayoutItemDetails video={video}>
         <CallLayoutItemAvatarVoiceDetect>
           <CallLayoutItemAvatar width={width} height={height}>
-            <CallLayoutItemAvatarImg />
+            <CallLayoutItemAvatarImg src={user.avatar} />
           </CallLayoutItemAvatar>
         </CallLayoutItemAvatarVoiceDetect>
       </CallLayoutItemDetails>
@@ -37,8 +43,8 @@ const CallLayoutItem: FC = () => {
           src="http://vjs.zencdn.net/v/oceans.mp4"
         />
       </CallLayoutItemVideoWrapper>
-      <CallLayoutItemNameWrapper data-tip="Thanh Vu">
-        <CallLayoutItemName>Thanh Vu</CallLayoutItemName>
+      <CallLayoutItemNameWrapper data-tip={user.name}>
+        <CallLayoutItemName>{user.name}</CallLayoutItemName>
         <CallLayoutItemNameMic>
           <Mic size={14} />
         </CallLayoutItemNameMic>

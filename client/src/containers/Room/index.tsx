@@ -1,21 +1,21 @@
 import { FC, useState, useEffect } from "react";
 import { useLocation, useHistory } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
-import { RoomWrapper, RoomOverlay } from "./styled";
+import { RoomWrapper, RoomOverlay, RoomContainer } from "./styled";
 
 import SpaceBackground from "../../components/SpaceBackground";
 import FormLoading from "../../components/FormLoading";
 import PasswordForm from "./components/PasswordForm";
 import NameForm from "./components/NameForm";
+import CallLayout from "./components/CallLayout";
+import Chat from "./components/Chat";
 
 import { socket } from "../../shared/socket/SocketProvider";
 
-interface User {
-  name: string;
-  avatar: string;
-  id: string;
-}
+import { RootState } from "../../store";
+import { setUsers } from "../../store/slice/room.slice";
 
 interface LocationState {
   name: string;
@@ -24,11 +24,13 @@ interface LocationState {
 const Room: FC = () => {
   const location = useLocation<LocationState>();
   const history = useHistory();
+  const dispatch = useDispatch();
+
+  const users = useSelector((state: RootState) => state.room.users);
 
   const [roomId, setRoomId] = useState<string>("");
   const [name, setName] = useState<string | undefined>("");
   const [dirty, setDirty] = useState<boolean>(false);
-  const [users, setUsers] = useState<User[]>([]);
   const [requiredPassword, setRequirePassword] = useState<boolean>(false);
   const [requireName, setRequireName] = useState<boolean>(false);
 
@@ -79,7 +81,7 @@ const Room: FC = () => {
 
   useEffect((): any => {
     socket.on("join-room-successfully", (data) => {
-      setUsers(data.users);
+      dispatch(setUsers(data.users));
     });
 
     return () => socket.off("join-room-successfully");
@@ -97,7 +99,12 @@ const Room: FC = () => {
 
   return (
     <RoomWrapper>
-      {users.length ? null : (
+      {users.length ? (
+        <RoomContainer>
+          <CallLayout />
+          <Chat />
+        </RoomContainer>
+      ) : (
         <>
           <SpaceBackground />
           <RoomOverlay>

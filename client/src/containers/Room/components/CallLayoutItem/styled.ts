@@ -23,10 +23,10 @@ export const CallLayoutItemAvatarVoiceDetect = styled.div`
   border-radius: 50%;
 `;
 
-export const CallLayoutItemAvatarImg = styled.div`
+export const CallLayoutItemAvatarImg = styled.div<{ src: string }>`
   width: 90%;
   height: 90%;
-  background-image: url("https://res.cloudinary.com/dumfvnj9f/image/upload/v1622008718/animals/kraken_ckm2d1.png");
+  background-image: url(${(props) => props.src});
   background-size: cover;
 `;
 
