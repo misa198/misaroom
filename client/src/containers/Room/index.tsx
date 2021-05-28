@@ -6,7 +6,7 @@ import { RoomWrapper, RoomOverlay } from "./styled";
 
 import SpaceBackground from "../../components/SpaceBackground";
 import FormLoading from "../../components/FormLoading";
-import PasswordForm from "./PasswordForm";
+import PasswordForm from "./components/PasswordForm";
 import NameForm from "./components/NameForm";
 
 import { socket } from "../../shared/socket/SocketProvider";
