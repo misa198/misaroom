@@ -24,7 +24,6 @@ interface PropTypes {
 const NameForm: FC<PropTypes> = ({ setName }: PropTypes) => {
   const formik = useFormik({
     initialValues: { name: "" },
-    enableReinitialize: false,
     validationSchema: schema,
     onSubmit: (formValues) => {
       setName(formValues.name);

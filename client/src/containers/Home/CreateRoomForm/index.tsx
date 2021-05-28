@@ -27,7 +27,6 @@ const CreateRoomForm: FC = () => {
 
   const formik = useFormik({
     initialValues: { name: "", password: "" },
-    enableReinitialize: false,
     validationSchema: schema,
     onSubmit: (formValues) => {
       name.current = formValues.name;

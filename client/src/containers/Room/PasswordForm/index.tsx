@@ -31,7 +31,6 @@ const PasswordForm: FC<PropTypes> = ({ name, roomId }: PropTypes) => {
 
   const formik = useFormik({
     initialValues: { password: "" },
-    enableReinitialize: false,
     validationSchema: schema,
     onSubmit: (formValues) => {
       socket.emit("join-room", {
