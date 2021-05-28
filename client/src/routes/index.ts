@@ -11,4 +11,10 @@ export const routes = [
     exact: false,
     component: lazy(() => import("../containers/Room")),
   },
+
+  {
+    path: "*",
+    exact: false,
+    component: lazy(() => import("../containers/NotFound")),
+  },
 ];
