@@ -77,6 +77,11 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       client.emit('join-room-successfully', {
         users: room.users,
       });
+      client.to(roomId).emit('new-member', {
+        name: name,
+        id: client.id,
+        avatar,
+      });
     }
   }
 
@@ -94,8 +99,8 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       );
       if (room.users.length === 0) this.redisCacheService.del(roomId);
       else this.redisCacheService.set(roomId, JSON.stringify(room));
+      client.to(roomId).emit('leave-room', { userId: client.id });
     }
-
     this.redisCacheService.del(client.id);
   }
 
