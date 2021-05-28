@@ -34,10 +34,18 @@ const Room: FC = () => {
 
   useEffect(() => {
     const { state, pathname } = location;
-    setRoomId(pathname.split("/")[2]);
-    setName(state?.name);
-    setDirty(true);
-  }, [location]);
+    const path = pathname.split("/")[2];
+    if (path?.length === 32) {
+      setRoomId(path);
+      setName(state?.name);
+      setDirty(true);
+    } else {
+      history.push("/");
+      toast("Room not found", {
+        type: "error",
+      });
+    }
+  }, [history, location]);
 
   useEffect(() => {
     if (!name && dirty) {
