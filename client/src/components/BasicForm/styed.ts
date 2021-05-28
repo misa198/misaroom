@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { Field, Form, Formik } from "formik";
 
 export const BasicFormOutsideBorder = styled.div`
   padding: 2px;
@@ -25,11 +24,7 @@ export const BasicFormTitle = styled.div`
   margin-bottom: 1.5rem;
 `;
 
-export const BasicFormFormik = styled(Formik)`
-  width: 100%;
-`;
-
-export const BasicForm = styled(Form)`
+export const BasicForm = styled.form`
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -52,7 +47,7 @@ export const BasicFormFieldWrapper = styled.div`
   }
 `;
 
-export const BasicFormField = styled(Field)`
+export const BasicFormField = styled.input`
   width: 100%;
   background-color: transparent;
   font-size: 1rem;

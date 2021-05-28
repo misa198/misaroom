@@ -1,12 +1,12 @@
-import { useEffect, FC } from "react";
+import { useEffect, FC, useRef } from "react";
 import { useHistory } from "react-router-dom";
 import * as yup from "yup";
+import { useFormik } from "formik";
 
 import {
   BasicFormOutsideBorder,
   BasicFormWrapper,
   BasicFormTitle,
-  BasicFormFormik,
   BasicForm,
   BasicFormFieldWrapper,
   BasicFormField,
@@ -23,10 +23,26 @@ const schema = yup.object().shape({
 
 const CreateRoomForm: FC = () => {
   const history = useHistory();
+  const name = useRef("");
+
+  const formik = useFormik({
+    initialValues: { name: "", password: "" },
+    enableReinitialize: false,
+    validationSchema: schema,
+    onSubmit: (formValues) => {
+      name.current = formValues.name;
+      socket.emit("create-room", {
+        password: formValues.password,
+      });
+    },
+  });
 
   useEffect(() => {
-    socket.on("create-room-successfully", (values) => {
-      history.push(`/r/${values.roomId}`);
+    socket.on("create-room-successfully", (data) => {
+      history.push({
+        pathname: `/r/${data.roomId}`,
+        search: `?name=${name.current}`,
+      });
     });
   }, [history]);
 
@@ -34,45 +50,37 @@ const CreateRoomForm: FC = () => {
     <BasicFormOutsideBorder>
       <BasicFormWrapper>
         <BasicFormTitle>create room</BasicFormTitle>
-        <BasicFormFormik
-          initialValues={{ name: "", password: "" }}
-          validationSchema={schema}
-          onSubmit={(values) => {
-            socket.emit("create-room", {
-              password: values.password,
-            });
-          }}
-        >
-          {({ errors, touched }) => (
-            <BasicForm>
-              <BasicFormFieldWrapper>
-                <BasicFormField
-                  id="name"
-                  name="name"
-                  type="text"
-                  placeholder="name"
-                />
-                {errors["name"] && touched["name"] ? (
-                  <BasicFormFieldError>{errors["name"]}</BasicFormFieldError>
-                ) : null}
-              </BasicFormFieldWrapper>
-              <BasicFormFieldWrapper>
-                <BasicFormField
-                  id="password"
-                  name="password"
-                  type="password"
-                  placeholder="password (optional)"
-                />
-                {errors["password"] && touched["password"] ? (
-                  <BasicFormFieldError>
-                    {errors["password"]}
-                  </BasicFormFieldError>
-                ) : null}
-              </BasicFormFieldWrapper>
-              <BasicFormButton>create</BasicFormButton>
-            </BasicForm>
-          )}
-        </BasicFormFormik>
+        <BasicForm onSubmit={formik.handleSubmit}>
+          <BasicFormFieldWrapper>
+            <BasicFormField
+              id="name"
+              name="name"
+              type="text"
+              placeholder="name"
+              onChange={formik.handleChange}
+              value={formik.values.name}
+            />
+            {formik.errors["name"] && formik.touched["name"] ? (
+              <BasicFormFieldError>{formik.errors["name"]}</BasicFormFieldError>
+            ) : null}
+          </BasicFormFieldWrapper>
+          <BasicFormFieldWrapper>
+            <BasicFormField
+              id="password"
+              name="password"
+              type="password"
+              placeholder="password (optional)"
+              onChange={formik.handleChange}
+              value={formik.values.password}
+            />
+            {formik.errors["password"] && formik.touched["password"] ? (
+              <BasicFormFieldError>
+                {formik.errors["password"]}
+              </BasicFormFieldError>
+            ) : null}
+          </BasicFormFieldWrapper>
+          <BasicFormButton>create</BasicFormButton>
+        </BasicForm>
       </BasicFormWrapper>
     </BasicFormOutsideBorder>
   );
