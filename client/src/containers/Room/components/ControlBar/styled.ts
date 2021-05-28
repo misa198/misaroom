@@ -11,7 +11,7 @@ export const ControlBarWrapper = styled.div<{ showControlBar: boolean }>`
   overflow: hidden;
   visibility: ${(props) => (props.showControlBar ? "unset" : "hidden")};
   opacity: ${(props) => (props.showControlBar ? 1 : 0)};
-  transition: all 200ms;
+  transition: all 300ms;
 `;
 
 export const ControlBarContainer = styled.div`
@@ -32,7 +32,7 @@ export const ControlBarButton = styled.button<{
   border-radius: 50%;
   border: none;
   cursor: pointer;
-  transition: all 200ms;
+  transition: all 300ms;
   background-color: ${(props) =>
     props.active ? "#fff" : "rgba(0, 0, 0, 0.5)"};
   color: ${(props) => (props.active ? "#000" : "#fff")};
