@@ -12,9 +12,9 @@ import {
   BasicFormField,
   BasicFormFieldError,
   BasicFormButton,
-} from "../../../components/BasicForm/styed";
+} from "../../../../components/BasicForm/styed";
 
-import { socket } from "../../../shared/socket/SocketProvider";
+import { socket } from "../../../../shared/socket/SocketProvider";
 
 const schema = yup.object().shape({
   name: yup.string().required(),

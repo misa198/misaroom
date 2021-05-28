@@ -11,7 +11,7 @@ import {
   BasicFormField,
   BasicFormFieldError,
   BasicFormButton,
-} from "../../../components/BasicForm/styed";
+} from "../../../../components/BasicForm/styed";
 
 const schema = yup.object().shape({
   name: yup.string().required(),
