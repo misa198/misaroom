@@ -49,10 +49,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       await this.redisCacheService.get(roomId),
     ) as RoomDetails;
 
-    if (!room)
-      client.emit('join-room-fail', {
-        message: 'Not found!',
-      });
+    if (!room) client.emit('join-room-fail');
     else if (room.password && room.creator !== client.id && !password) {
       client.emit('require-password');
     } else if (
@@ -95,7 +92,6 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
         room.users.findIndex((user) => user.id === client.id),
         1,
       );
-      console.log(room);
       if (room.users.length === 0) this.redisCacheService.del(roomId);
       else this.redisCacheService.set(roomId, JSON.stringify(room));
     }
