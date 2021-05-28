@@ -1,7 +1,7 @@
 import { FC, useState } from "react";
 import useResize from "use-resize-observer";
 import Tooltip from "react-tooltip";
-import { Mic } from "react-feather";
+import { Mic, MicOff } from "react-feather";
 
 import {
   CallLayoutItemWrapper,
@@ -46,7 +46,7 @@ const CallLayoutItem: FC<PropTypes> = ({ user }: PropTypes) => {
       <CallLayoutItemNameWrapper data-tip={user.name}>
         <CallLayoutItemName>{user.name}</CallLayoutItemName>
         <CallLayoutItemNameMic>
-          <Mic size={14} />
+          {user.mic ? <Mic size={14} /> : <MicOff size={14} />}
         </CallLayoutItemNameMic>
       </CallLayoutItemNameWrapper>
       <Tooltip place="top" type="dark" effect="solid" />
