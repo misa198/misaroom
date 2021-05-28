@@ -9,7 +9,7 @@ export const CallLayoutItemWrapper = styled.div`
   user-select: none;
 `;
 
-export const CallLayoutItemDetails = styled.div<{ video?: boolean }>`
+export const CallLayoutItemDetails = styled.div<{ video?: number | boolean }>`
   width: 100%;
   height: 100%;
   align-items: center;
@@ -83,7 +83,9 @@ export const CallLayoutItemNameMic = styled.div`
   margin-left: 8px;
 `;
 
-export const CallLayoutItemVideoWrapper = styled.div<{ video?: boolean }>`
+export const CallLayoutItemVideoWrapper = styled.div<{
+  video?: number | boolean;
+}>`
   width: 100%;
   height: 100%;
   overflow: hidden;
@@ -94,6 +96,11 @@ export const CallLayoutItemVideoWrapper = styled.div<{ video?: boolean }>`
 `;
 
 export const CallLayoutItemVideo = styled.video`
-  width: 100%;
-  height: 100%;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg); /* Safari and Chrome */
+  -moz-transform: rotateY(180deg); /* Firefox */
 `;

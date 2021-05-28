@@ -4,6 +4,8 @@ import { User } from "../../types/User";
 interface State {
   status: {
     showChat: boolean;
+    camera: boolean;
+    audio: boolean;
   };
   users: User[];
 }
@@ -11,6 +13,8 @@ interface State {
 const initialState: State = {
   status: {
     showChat: false,
+    audio: false,
+    camera: false,
   },
   users: [],
 };
@@ -23,6 +27,7 @@ const slice = createSlice({
       return {
         ...state,
         status: {
+          ...state.status,
           showChat: !state.status.showChat,
         },
       };
@@ -48,9 +53,53 @@ const slice = createSlice({
         users,
       };
     },
+    turnOnMic(state) {
+      return {
+        ...state,
+        status: {
+          ...state.status,
+          audio: true,
+        },
+      };
+    },
+    turnOffMic(state) {
+      return {
+        ...state,
+        status: {
+          ...state.status,
+          audio: false,
+        },
+      };
+    },
+    turnOffCam(state) {
+      return {
+        ...state,
+        status: {
+          ...state.status,
+          camera: false,
+        },
+      };
+    },
+    turnOnCam(state) {
+      return {
+        ...state,
+        status: {
+          ...state.status,
+          camera: true,
+        },
+      };
+    },
   },
 });
 
-export const { changeChatStatus, setUsers, addNewUser, removeUser } =
-  slice.actions;
+export const {
+  changeChatStatus,
+  setUsers,
+  addNewUser,
+  removeUser,
+  turnOnCam,
+  turnOffCam,
+  turnOnMic,
+  turnOffMic,
+} = slice.actions;
 export default slice.reducer;

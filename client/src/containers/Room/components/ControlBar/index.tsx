@@ -1,7 +1,15 @@
 import { FC } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Tooltip from "react-tooltip";
-import { Mic, Camera, Phone, Monitor, MessageSquare } from "react-feather";
+import {
+  Mic,
+  MicOff,
+  Camera,
+  CameraOff,
+  Phone,
+  Monitor,
+  MessageSquare,
+} from "react-feather";
 
 import {
   ControlBarWrapper,
@@ -11,7 +19,13 @@ import {
 
 import { RootState } from "../../../../store";
 
-import { changeChatStatus as changeChatStatusAction } from "../../../../store/slice/room.slice";
+import {
+  changeChatStatus as changeChatStatusAction,
+  turnOffCam,
+  turnOnCam,
+  turnOffMic,
+  turnOnMic,
+} from "../../../../store/slice/room.slice";
 
 interface PropTypes {
   showControlBar: boolean;
@@ -19,9 +33,7 @@ interface PropTypes {
 
 const ControlBar: FC<PropTypes> = ({ showControlBar }: PropTypes) => {
   const dispatch = useDispatch();
-  const showChat = useSelector(
-    (state: RootState) => state.room.status.showChat
-  );
+  const status = useSelector((state: RootState) => state.room.status);
 
   function changeChatStatus(): void {
     dispatch(changeChatStatusAction());
@@ -31,6 +43,22 @@ const ControlBar: FC<PropTypes> = ({ showControlBar }: PropTypes) => {
     window.location.href = "/";
   }
 
+  function changeMicStatus(): void {
+    if (status.audio) {
+      dispatch(turnOffMic());
+    } else {
+      dispatch(turnOnMic());
+    }
+  }
+
+  function changeCameraStatus(): void {
+    if (status.camera) {
+      dispatch(turnOffCam());
+    } else {
+      dispatch(turnOnCam());
+    }
+  }
+
   return (
     <ControlBarWrapper showControlBar={showControlBar}>
       <ControlBarContainer>
@@ -38,24 +66,32 @@ const ControlBar: FC<PropTypes> = ({ showControlBar }: PropTypes) => {
           <Monitor />
         </ControlBarButton>
         <Tooltip place="top" type="dark" effect="solid" />
-        <ControlBarButton active={false} data-tip="Camera">
-          <Camera />
-        </ControlBarButton>
-        <Tooltip place="top" type="dark" effect="solid" />
-        <ControlBarButton active data-tip="Microphone">
-          <Mic />
+        <ControlBarButton
+          active={status.camera}
+          data-tip="Camera"
+          onClick={changeCameraStatus}
+        >
+          {status.camera ? <Camera /> : <CameraOff />}
         </ControlBarButton>
         <Tooltip place="top" type="dark" effect="solid" />
         <ControlBarButton
-          active={showChat}
+          active={status.audio}
+          data-tip="Microphone"
+          onClick={changeMicStatus}
+        >
+          {status.audio ? <Mic /> : <MicOff />}
+        </ControlBarButton>
+        <Tooltip place="top" type="dark" effect="solid" />
+        <ControlBarButton
+          active={status.showChat}
           data-tip="Chat"
           onClick={changeChatStatus}
         >
           <MessageSquare />
         </ControlBarButton>
         <Tooltip place="top" type="dark" effect="solid" />
-        <ControlBarButton active={false} call data-tip="End">
-          <Phone onClick={endRoom} />
+        <ControlBarButton active={false} call data-tip="End" onClick={endRoom}>
+          <Phone />
         </ControlBarButton>
         <Tooltip place="top" type="dark" effect="solid" />
       </ControlBarContainer>

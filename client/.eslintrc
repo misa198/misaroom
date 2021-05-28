@@ -32,6 +32,7 @@
   "rules": {
     "@typescript-eslint/dot-notation": "off",
     "@typescript-eslint/no-explicit-any": "off",
+    "no-param-reassign": "off",
     "linebreak-style": "off",
     "import/prefer-default-export": "off",
     "react/react-in-jsx-scope": "off",

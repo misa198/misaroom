@@ -37,12 +37,4 @@ export const ControlBarButton = styled.button<{
     props.active ? "#fff" : "rgba(0, 0, 0, 0.5)"};
   color: ${(props) => (props.active ? "#000" : "#fff")};
   ${(props) => (props.call ? "background: red;" : "")}
-
-  ${(props) =>
-    props.call
-      ? ""
-      : `&:hover {
-    background-color: #fff;
-    color: #000;
-  }`}
 `;
