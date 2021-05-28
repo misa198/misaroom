@@ -33,8 +33,24 @@ const slice = createSlice({
         users: action.payload,
       };
     },
+    addNewUser(state, action: PayloadAction<User>) {
+      return {
+        ...state,
+        users: [...state.users, action.payload],
+      };
+    },
+    removeUser(state, action: PayloadAction<string>) {
+      const users: User[] = JSON.parse(JSON.stringify(state.users));
+      const index = users.findIndex((user) => user.id === action.payload);
+      users.splice(index, 1);
+      return {
+        ...state,
+        users,
+      };
+    },
   },
 });
 
-export const { changeChatStatus, setUsers } = slice.actions;
+export const { changeChatStatus, setUsers, addNewUser, removeUser } =
+  slice.actions;
 export default slice.reducer;

@@ -45,6 +45,8 @@ export const CallLayoutItemAvatar = styled.div<{
     height: ${props.height * 0.3}px;
     `}
 
+  max-width: 130px;
+  max-height: 130px;
   border-radius: 50%;
   overflow: hidden;
   background-image: linear-gradient(

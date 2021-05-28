@@ -15,7 +15,7 @@ import Chat from "./components/Chat";
 import { socket } from "../../shared/socket/SocketProvider";
 
 import { RootState } from "../../store";
-import { setUsers } from "../../store/slice/room.slice";
+import { setUsers, addNewUser, removeUser } from "../../store/slice/room.slice";
 
 interface LocationState {
   name: string;
@@ -95,7 +95,21 @@ const Room: FC = () => {
     return () => socket.off("require-password");
   });
 
-  useEffect(() => {}, []);
+  useEffect((): any => {
+    socket.on("new-member", (data) => {
+      dispatch(addNewUser(data));
+    });
+
+    return () => socket.off("new-member");
+  });
+
+  useEffect((): any => {
+    socket.on("leave-room", (data) => {
+      dispatch(removeUser(data.userId));
+    });
+
+    return () => socket.off("leave-room");
+  });
 
   return (
     <RoomWrapper>
