@@ -18,7 +18,7 @@ import {
 
 const CallLayoutItem: FC = () => {
   const { ref, width = 0, height = 0 } = useResize();
-  const [video, setVideo] = useState(true);
+  const [video, setVideo] = useState(false);
 
   return (
     <CallLayoutItemWrapper ref={ref}>
@@ -34,6 +34,7 @@ const CallLayoutItem: FC = () => {
         <CallLayoutItemVideo
           autoPlay
           loop
+          controls={false}
           src="http://vjs.zencdn.net/v/oceans.mp4"
         />
       </CallLayoutItemVideoWrapper>

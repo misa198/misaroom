@@ -12,10 +12,9 @@ export const CallLayoutItemWrapper = styled.div`
 export const CallLayoutItemDetails = styled.div<{ video: boolean }>`
   width: 100%;
   height: 100%;
-  display: flex;
   align-items: center;
   justify-content: center;
-  display: ${(props) => (props.video ? "none" : "unset")};
+  display: ${(props) => (props.video ? "none" : "flex")};
 `;
 
 export const CallLayoutItemAvatarVoiceDetect = styled.div`
@@ -86,10 +85,9 @@ export const CallLayoutItemVideoWrapper = styled.div<{ video: boolean }>`
   width: 100%;
   height: 100%;
   overflow: hidden;
-  display: ${(props) => (!props.video ? "none" : "unset")};
-  display: flex;
   justify-content: center;
   align-items: center;
+  display: ${(props) => (!props.video ? "none" : "flex")};
 `;
 
 export const CallLayoutItemVideo = styled.video`
