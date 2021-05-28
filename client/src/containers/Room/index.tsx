@@ -5,7 +5,9 @@ import { toast } from "react-toastify";
 import { RoomWrapper, RoomOverlay } from "./styled";
 
 import SpaceBackground from "../../components/SpaceBackground";
-import FormLoader from "../../components/FormLoading";
+import FormLoading from "../../components/FormLoading";
+import PasswordForm from "./PasswordForm";
+import NameForm from "./NameForm";
 
 import { socket } from "../../shared/socket/SocketProvider";
 
@@ -26,8 +28,9 @@ const Room: FC = () => {
   const [roomId, setRoomId] = useState<string>("");
   const [name, setName] = useState<string | undefined>("");
   const [dirty, setDirty] = useState<boolean>(false);
-  const [requiredPassword, setRequirePassword] = useState<boolean>(false);
   const [users, setUsers] = useState<User[]>([]);
+  const [requiredPassword, setRequirePassword] = useState<boolean>(false);
+  const [requireName, setRequireName] = useState<boolean>(false);
 
   useEffect(() => {
     const { state, pathname } = location;
@@ -37,18 +40,23 @@ const Room: FC = () => {
   }, [location]);
 
   useEffect(() => {
-    if (roomId.length !== 32 && dirty) {
-      history.push("/");
-      toast("Room not found", {
-        type: "error",
-      });
-    } else if (roomId && name) {
+    if (!name && dirty) {
+      setRequireName(true);
+    }
+  }, [dirty, name]);
+
+  useEffect(() => {
+    if (name) setRequireName(false);
+  }, [name]);
+
+  useEffect(() => {
+    if (roomId && name) {
       socket.emit("join-room", {
         roomId,
         name,
       });
     }
-  }, [dirty, history, name, roomId]);
+  }, [name, roomId]);
 
   useEffect((): any => {
     socket.on("join-room-fail", () => {
@@ -69,14 +77,30 @@ const Room: FC = () => {
     return () => socket.off("join-room-successfully");
   });
 
+  useEffect((): any => {
+    socket.on("require-password", () => {
+      setRequirePassword(true);
+    });
+
+    return () => socket.off("require-password");
+  });
+
   useEffect(() => {}, []);
 
   return (
     <RoomWrapper>
-      <SpaceBackground />
-      <RoomOverlay>
-        <FormLoader />
-      </RoomOverlay>
+      {users.length ? null : (
+        <>
+          <SpaceBackground />
+          <RoomOverlay>
+            {requiredPassword && name && (
+              <PasswordForm name={name} roomId={roomId} />
+            )}
+            {requireName && <NameForm setName={setName} />}
+            {!requireName && !requiredPassword && <FormLoading />}
+          </RoomOverlay>
+        </>
+      )}
     </RoomWrapper>
   );
 };

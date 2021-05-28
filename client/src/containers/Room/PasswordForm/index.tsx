@@ -1,7 +1,8 @@
-import { useEffect, FC, useRef } from "react";
+import { useEffect, FC } from "react";
 import { useHistory } from "react-router-dom";
 import * as yup from "yup";
 import { useFormik } from "formik";
+import { toast } from "react-toastify";
 
 import {
   BasicFormOutsideBorder,
@@ -17,63 +18,51 @@ import {
 import { socket } from "../../../shared/socket/SocketProvider";
 
 const schema = yup.object().shape({
-  name: yup.string().required(),
-  password: yup.string().nullable(),
+  password: yup.string().required(),
 });
 
-const CreateRoomForm: FC = () => {
+interface PropTypes {
+  name: string;
+  roomId: string;
+}
+
+const PasswordForm: FC<PropTypes> = ({ name, roomId }: PropTypes) => {
   const history = useHistory();
-  const name = useRef("");
 
   const formik = useFormik({
-    initialValues: { name: "", password: "" },
+    initialValues: { password: "" },
     enableReinitialize: false,
     validationSchema: schema,
     onSubmit: (formValues) => {
-      name.current = formValues.name;
-      socket.emit("create-room", {
+      socket.emit("join-room", {
+        roomId,
+        name,
         password: formValues.password,
       });
     },
   });
 
   useEffect((): any => {
-    socket.on("create-room-successfully", (data) => {
-      history.push({
-        pathname: `/r/${data.roomId}`,
-        state: {
-          name: name.current,
-        },
+    socket.on("wrong-password", () => {
+      toast("Wrong password", {
+        type: "error",
       });
     });
 
-    return () => socket.off("create-room-successfully");
+    return () => socket.off("wrong-password");
   }, [history]);
 
   return (
     <BasicFormOutsideBorder>
       <BasicFormWrapper>
-        <BasicFormTitle>create room</BasicFormTitle>
+        <BasicFormTitle>private room</BasicFormTitle>
         <BasicForm onSubmit={formik.handleSubmit}>
-          <BasicFormFieldWrapper>
-            <BasicFormField
-              id="name"
-              name="name"
-              type="text"
-              placeholder="name"
-              onChange={formik.handleChange}
-              value={formik.values.name}
-            />
-            {formik.errors["name"] && formik.touched["name"] ? (
-              <BasicFormFieldError>{formik.errors["name"]}</BasicFormFieldError>
-            ) : null}
-          </BasicFormFieldWrapper>
           <BasicFormFieldWrapper>
             <BasicFormField
               id="password"
               name="password"
               type="password"
-              placeholder="password (optional)"
+              placeholder="password"
               onChange={formik.handleChange}
               value={formik.values.password}
             />
@@ -83,11 +72,11 @@ const CreateRoomForm: FC = () => {
               </BasicFormFieldError>
             ) : null}
           </BasicFormFieldWrapper>
-          <BasicFormButton>create</BasicFormButton>
+          <BasicFormButton>join</BasicFormButton>
         </BasicForm>
       </BasicFormWrapper>
     </BasicFormOutsideBorder>
   );
 };
 
-export default CreateRoomForm;
+export default PasswordForm;
