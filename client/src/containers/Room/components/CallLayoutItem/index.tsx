@@ -32,7 +32,6 @@ const CallLayoutItem: FC = () => {
 
       <CallLayoutItemVideoWrapper video={video}>
         <CallLayoutItemVideo
-          autoPlay
           loop
           controls={false}
           src="http://vjs.zencdn.net/v/oceans.mp4"

@@ -7,6 +7,7 @@ export const CallLayoutWrapper = styled.div<{ layout: Layout }>`
   height: 100%;
   display: grid;
   grid-gap: 0.25rem;
+  position: relative;
   ${(props) => `
     grid-template-columns: repeat(${props.layout.columns}, 1fr);
     grid-template-rows: repeat(${props.layout.rows}, 1fr);

@@ -3,6 +3,7 @@ import { useState, FC, useEffect } from "react";
 import { CallLayoutWrapper } from "./styled";
 
 import CallLayoutItem from "../CallLayoutItem";
+import ControlBar from "../ControlBar";
 
 import { calLayout, Layout } from "../../../../shared/cal-layout/cal-layout";
 
@@ -26,6 +27,7 @@ const CallLayout: FC<PropTypes> = ({ users }: PropTypes) => {
       {Array.from(Array(amount).keys()).map((_, index) => (
         <CallLayoutItem key={index.toFixed()} />
       ))}
+      <ControlBar />
     </CallLayoutWrapper>
   );
 };

@@ -1,0 +1,40 @@
+import { FC } from "react";
+import Tooltip from "react-tooltip";
+import { Mic, Camera, Phone, Monitor, MessageCircle } from "react-feather";
+
+import {
+  ControlBarWrapper,
+  ControlBarContainer,
+  ControlBarButton,
+} from "./styled";
+
+const ControlBar: FC = () => {
+  return (
+    <ControlBarWrapper>
+      <ControlBarContainer>
+        <ControlBarButton active={false} data-tip="Share screen">
+          <Monitor />
+        </ControlBarButton>
+        <Tooltip place="top" type="dark" effect="solid" />
+        <ControlBarButton active={false} data-tip="Camera">
+          <Camera />
+        </ControlBarButton>
+        <Tooltip place="top" type="dark" effect="solid" />
+        <ControlBarButton active data-tip="Microphone">
+          <Mic />
+        </ControlBarButton>
+        <Tooltip place="top" type="dark" effect="solid" />
+        <ControlBarButton active data-tip="Chat">
+          <MessageCircle />
+        </ControlBarButton>
+        <Tooltip place="top" type="dark" effect="solid" />
+        <ControlBarButton active={false} call data-tip="End">
+          <Phone />
+        </ControlBarButton>
+        <Tooltip place="top" type="dark" effect="solid" />
+      </ControlBarContainer>
+    </ControlBarWrapper>
+  );
+};
+
+export default ControlBar;
