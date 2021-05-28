@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const BasicFormOutsideBorder = styled.div`
   padding: 2px;
-  background-color: #000;
+  background-color: rgba(0, 0, 0, 0.9);
   border-radius: 8px;
   border: 2px solid #fff;
 `;
@@ -13,7 +13,6 @@ export const BasicFormWrapper = styled.div`
   align-items: center;
   justify-content: center;
   width: 300px;
-  background-color: #000;
   padding: 2rem 1rem;
   border-radius: 6px;
   border: 1px solid #fff;

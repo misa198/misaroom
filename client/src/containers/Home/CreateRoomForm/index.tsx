@@ -37,11 +37,13 @@ const CreateRoomForm: FC = () => {
     },
   });
 
-  useEffect(() => {
+  useEffect((): void => {
     socket.on("create-room-successfully", (data) => {
       history.push({
         pathname: `/r/${data.roomId}`,
-        search: `?name=${name.current}`,
+        state: {
+          name: name.current,
+        },
       });
     });
   }, [history]);
