@@ -5,6 +5,8 @@ export const BasicFormOutsideBorder = styled.div`
   background-color: rgba(0, 0, 0, 0.9);
   border-radius: 8px;
   border: 2px solid #fff;
+  width: 300px;
+  animation: formAppear 300ms;
 `;
 
 export const BasicFormWrapper = styled.div`
@@ -12,7 +14,7 @@ export const BasicFormWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 300px;
+  width: 100%;
   padding: 2rem 1rem;
   border-radius: 6px;
   border: 1px solid #fff;

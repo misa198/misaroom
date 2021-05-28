@@ -2,9 +2,10 @@ import { FC, useState, useEffect } from "react";
 import { useLocation, useHistory } from "react-router-dom";
 import { toast } from "react-toastify";
 
-import { RoomWrapper } from "./styled";
+import { RoomWrapper, RoomOverlay } from "./styled";
 
 import SpaceBackground from "../../components/SpaceBackground";
+import FormLoader from "../../components/FormLoading";
 
 import { socket } from "../../shared/socket/SocketProvider";
 
@@ -25,6 +26,7 @@ const Room: FC = () => {
   const [roomId, setRoomId] = useState<string>("");
   const [name, setName] = useState<string | undefined>("");
   const [dirty, setDirty] = useState<boolean>(false);
+  const [requiredPassword, setRequirePassword] = useState<boolean>(false);
   const [users, setUsers] = useState<User[]>([]);
 
   useEffect(() => {
@@ -67,9 +69,14 @@ const Room: FC = () => {
     return () => socket.off("join-room-successfully");
   });
 
+  useEffect(() => {}, []);
+
   return (
     <RoomWrapper>
       <SpaceBackground />
+      <RoomOverlay>
+        <FormLoader />
+      </RoomOverlay>
     </RoomWrapper>
   );
 };

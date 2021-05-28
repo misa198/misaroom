@@ -17,4 +17,13 @@ export default createGlobalStyle`
       display: none;
     }
   }
+
+  @keyframes formAppear {
+    0% {
+      opacity: 0;
+    } 
+    100% {
+      opacity: 1;
+    }
+  }
 `;
