@@ -9,7 +9,7 @@ export const CallLayoutItemWrapper = styled.div`
   user-select: none;
 `;
 
-export const CallLayoutItemDetails = styled.div<{ video: boolean }>`
+export const CallLayoutItemDetails = styled.div<{ video?: boolean }>`
   width: 100%;
   height: 100%;
   align-items: center;
@@ -83,13 +83,14 @@ export const CallLayoutItemNameMic = styled.div`
   margin-left: 8px;
 `;
 
-export const CallLayoutItemVideoWrapper = styled.div<{ video: boolean }>`
+export const CallLayoutItemVideoWrapper = styled.div<{ video?: boolean }>`
   width: 100%;
   height: 100%;
   overflow: hidden;
   justify-content: center;
   align-items: center;
-  display: ${(props) => (!props.video ? "none" : "flex")};
+  display: flex;
+  visibility: ${(props) => (!props.video ? "hidden" : "unset")};
 `;
 
 export const CallLayoutItemVideo = styled.video`
