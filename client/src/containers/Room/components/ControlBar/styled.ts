@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const ControlBarWrapper = styled.div`
+export const ControlBarWrapper = styled.div<{ showControlBar: boolean }>`
   position: absolute;
   width: 100%;
   height: 50px;
@@ -9,6 +9,9 @@ export const ControlBarWrapper = styled.div`
   display: flex;
   justify-content: center;
   overflow: hidden;
+  visibility: ${(props) => (props.showControlBar ? "unset" : "hidden")};
+  opacity: ${(props) => (props.showControlBar ? 1 : 0)};
+  transition: all 200ms;
 `;
 
 export const ControlBarContainer = styled.div`

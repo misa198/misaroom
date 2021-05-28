@@ -8,9 +8,13 @@ import {
   ControlBarButton,
 } from "./styled";
 
-const ControlBar: FC = () => {
+interface PropTypes {
+  showControlBar: boolean;
+}
+
+const ControlBar: FC<PropTypes> = ({ showControlBar }: PropTypes) => {
   return (
-    <ControlBarWrapper>
+    <ControlBarWrapper showControlBar={showControlBar}>
       <ControlBarContainer>
         <ControlBarButton active={false} data-tip="Share screen">
           <Monitor />
