@@ -1,6 +1,6 @@
 import { FC } from "react";
 import Tooltip from "react-tooltip";
-import { Mic, Camera, Phone, Monitor, MessageCircle } from "react-feather";
+import { Mic, Camera, Phone, Monitor, MessageSquare } from "react-feather";
 
 import {
   ControlBarWrapper,
@@ -29,7 +29,7 @@ const ControlBar: FC<PropTypes> = ({ showControlBar }: PropTypes) => {
         </ControlBarButton>
         <Tooltip place="top" type="dark" effect="solid" />
         <ControlBarButton active data-tip="Chat">
-          <MessageCircle />
+          <MessageSquare />
         </ControlBarButton>
         <Tooltip place="top" type="dark" effect="solid" />
         <ControlBarButton active={false} call data-tip="End">
