@@ -1,5 +1,6 @@
 import { FC, useState } from "react";
 import useResize from "use-resize-observer";
+import Tooltip from "react-tooltip";
 import { Mic } from "react-feather";
 
 import {
@@ -36,12 +37,13 @@ const CallLayoutItem: FC = () => {
           src="http://vjs.zencdn.net/v/oceans.mp4"
         />
       </CallLayoutItemVideoWrapper>
-      <CallLayoutItemNameWrapper>
+      <CallLayoutItemNameWrapper data-tip="Misa198">
         <CallLayoutItemName>Misa198</CallLayoutItemName>
         <CallLayoutItemNameMic>
           <Mic size={14} />
         </CallLayoutItemNameMic>
       </CallLayoutItemNameWrapper>
+      <Tooltip place="top" type="dark" effect="solid" />
     </CallLayoutItemWrapper>
   );
 };
