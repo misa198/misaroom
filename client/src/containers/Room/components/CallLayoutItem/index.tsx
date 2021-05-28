@@ -30,7 +30,6 @@ const CallLayoutItem: FC<PropTypes> = ({ user }: PropTypes) => {
   const { ref, width = 0, height = 0 } = useResize();
   const [stream, setStream] = useState<MediaStream>();
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [showVideo, setShowVideo] = useState<boolean>(false);
 
   const status = useSelector((state: RootState) => state.room.status);
 
