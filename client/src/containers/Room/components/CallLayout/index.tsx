@@ -12,7 +12,7 @@ interface PropTypes {
   users: User[];
 }
 
-const amount = 6;
+const amount = 50;
 
 const CallLayout: FC<PropTypes> = ({ users }: PropTypes) => {
   const [layout, setLayout] = useState<Layout>({ columns: 0, rows: 0 });
