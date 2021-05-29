@@ -81,7 +81,7 @@ const Room: FC = () => {
 
   useEffect((): any => {
     socket.on("join-room-successfully", (data) => {
-      dispatch(setUsers(data.users));
+      dispatch(setUsers({ users: data.users, id: roomId }));
     });
 
     return () => socket.off("join-room-successfully");

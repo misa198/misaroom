@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { User } from "../../types/User";
 
 interface State {
+  id: string;
   status: {
     showChat: boolean;
     camera: boolean;
@@ -11,9 +12,10 @@ interface State {
 }
 
 const initialState: State = {
+  id: "",
   status: {
     showChat: false,
-    audio: false,
+    audio: true,
     camera: false,
   },
   users: [],
@@ -32,10 +34,11 @@ const slice = createSlice({
         },
       };
     },
-    setUsers(state, action: PayloadAction<User[]>) {
+    setUsers(state, action: PayloadAction<{ users: User[]; id: string }>) {
       return {
         ...state,
-        users: action.payload,
+        id: action.payload.id,
+        users: action.payload.users,
       };
     },
     addNewUser(state, action: PayloadAction<User>) {
