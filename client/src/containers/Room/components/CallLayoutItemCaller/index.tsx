@@ -26,7 +26,7 @@ interface PropTypes {
 
 const CallLayoutItemCaller: FC<PropTypes> = ({ user }: PropTypes) => {
   const { ref, width = 0, height = 0 } = useResize();
-  const videoForAudioRef = useRef<HTMLVideoElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const status = useSelector((state: RootState) => state.room.status);
 
@@ -41,7 +41,7 @@ const CallLayoutItemCaller: FC<PropTypes> = ({ user }: PropTypes) => {
       </CallLayoutItemDetails>
 
       <CallLayoutItemVideoWrapper video={status.camera}>
-        <CallLayoutItemVideo controls={false} ref={videoForAudioRef} muted />
+        <CallLayoutItemVideo controls ref={videoRef} muted />
       </CallLayoutItemVideoWrapper>
 
       <CallLayoutItemNameWrapper data-tip={user.name}>

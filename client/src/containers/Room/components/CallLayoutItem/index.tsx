@@ -1,6 +1,6 @@
 import { FC, useEffect, useRef, useState } from "react";
+import { Instance } from "simple-peer";
 import useResize from "use-resize-observer";
-import Peer from "peerjs";
 import Tooltip from "react-tooltip";
 import { Mic, MicOff } from "react-feather";
 
@@ -24,53 +24,34 @@ import { User } from "../../../../types/User";
 
 interface PropTypes {
   user: User;
-  audioPeer: Peer;
-  callerAudioStream: MediaStream;
+  callerAudioPeer: Instance;
 }
 
 const CallLayoutItem: FC<PropTypes> = ({
   user,
-  audioPeer,
-  callerAudioStream,
+  callerAudioPeer,
 }: PropTypes) => {
   const { ref, width = 0, height = 0 } = useResize();
-  const [call, setCall] = useState<Peer.MediaConnection>();
   const videoForAudioRef = useRef<HTMLVideoElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const [audioStream, setAudioStream] = useState<MediaStream>();
 
   useEffect((): any => {
-    socket.on(`new-user-ready-call-audio_${user.id}`, () => {
-      setCall(audioPeer.call(`audio_${user.id}`, callerAudioStream));
+    socket.on(`new-user-ready-call-audio_${user.id}`, ({ signal }) => {
+      callerAudioPeer.signal(signal);
     });
-
-    return () => socket.off(`new-user-ready-call-audio_${user.id}`);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [audioPeer, user.id]);
+  }, [callerAudioPeer, user.id]);
 
   useEffect(() => {
-    if (call) {
-      call.on("stream", (remoteStream) => {
-        setAudioStream(remoteStream);
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [call]);
-
-  useEffect(() => {
-    audioPeer.on("call", (_call) => {
-      _call.answer(callerAudioStream);
-      _call.on("stream", (remoteStream) => {
-        setAudioStream(remoteStream);
-      });
+    callerAudioPeer.on("stream", (stream) => {
+      setAudioStream(stream);
     });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [audioPeer]);
+  }, [callerAudioPeer]);
 
   useEffect(() => {
-    if (videoForAudioRef.current && audioStream) {
-      videoForAudioRef.current.srcObject = audioStream;
-      videoForAudioRef.current.play();
+    if (audioStream && videoRef.current && !videoRef.current.srcObject) {
+      videoRef.current.srcObject = audioStream;
+      videoRef.current.play();
     }
   }, [audioStream]);
 
@@ -85,8 +66,8 @@ const CallLayoutItem: FC<PropTypes> = ({
       </CallLayoutItemDetails>
 
       <CallLayoutItemVideoWrapper video={user.camera}>
-        <CallLayoutItemVideo controls={false} />
-        <CallLayoutItemVideoForAudioTrack ref={videoForAudioRef} autoPlay />
+        <CallLayoutItemVideo controls ref={videoRef} autoPlay />
+        <CallLayoutItemVideoForAudioTrack ref={videoForAudioRef} />
       </CallLayoutItemVideoWrapper>
 
       <CallLayoutItemNameWrapper data-tip={user.name}>

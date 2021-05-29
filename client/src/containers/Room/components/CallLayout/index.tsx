@@ -1,7 +1,7 @@
 import { useState, FC, useEffect } from "react";
 import { useSelector } from "react-redux";
-import Peer from "peerjs";
 
+import Peer, { Instance } from "simple-peer";
 import { CallLayoutWrapper } from "./styled";
 
 import CallLayoutItem from "../CallLayoutItem";
@@ -15,12 +15,11 @@ import { socket } from "../../../../shared/socket/SocketProvider";
 
 const CallLayout: FC = () => {
   const users = useSelector((state: RootState) => state.room.users);
-  const roomId = useSelector((state: RootState) => state.room.id);
-  const status = useSelector((state: RootState) => state.room.status);
+
   const [layout, setLayout] = useState<Layout>({ columns: 0, rows: 0 });
   const [showControlBar, setShowControlBar] = useState<boolean>(false);
-  const [audioStream, setAudioStream] = useState<MediaStream>();
-  const [audioPeer, setAudioPeer] = useState<Peer>();
+  const [audioPeer, setAudioPeer] = useState<Instance>();
+  const roomId = useSelector((state: RootState) => state.room.id);
 
   useEffect(() => {
     setLayout(calLayout(users.length));
@@ -37,44 +36,35 @@ const CallLayout: FC = () => {
     return null;
   }, [showControlBar]);
 
-  useEffect(() => {
-    setAudioPeer(new Peer(`audio_${socket.id}`));
-    socket.emit("ready-call-audio", {
-      roomId,
-    });
-  }, [roomId]);
-
-  useEffect(() => {
-    navigator.mediaDevices
-      .getUserMedia({ video: false, audio: true })
-      .then((data) => {
-        data.getAudioTracks().forEach((track) => {
-          track.enabled = false;
-        });
-        setAudioStream(data);
-      });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    if (status.audio && audioStream) {
-      audioStream.getAudioTracks().forEach((track) => {
-        track.enabled = true;
-      });
-    }
-    if (!status.audio && audioStream) {
-      audioStream.getAudioTracks().forEach((track) => {
-        track.enabled = false;
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status.audio]);
-
   function changeControlBar(): void {
     setShowControlBar(true);
   }
 
-  if (audioPeer && audioStream)
+  useEffect(() => {
+    navigator.mediaDevices
+      .getUserMedia({ audio: true, video: true })
+      .then((stream) => {
+        stream.getAudioTracks().forEach((track) => {
+          track.enabled = false;
+        });
+        const initialAudioPeer = new Peer({
+          initiator: true,
+          trickle: false,
+          config: {
+            iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+          },
+          stream,
+        });
+
+        setAudioPeer(initialAudioPeer);
+
+        initialAudioPeer.on("signal", (signal) => {
+          socket.emit("ready-call-audio", { roomId, signal });
+        });
+      });
+  }, [roomId]);
+
+  if (audioPeer)
     return (
       <CallLayoutWrapper layout={layout} onMouseMove={changeControlBar}>
         {users.map((user, index) =>
@@ -82,9 +72,8 @@ const CallLayout: FC = () => {
             <CallLayoutItemCaller user={user} key={`user_${index.toFixed()}`} />
           ) : (
             <CallLayoutItem
-              callerAudioStream={audioStream}
+              callerAudioPeer={audioPeer}
               user={user}
-              audioPeer={audioPeer}
               key={`user_${index.toFixed()}`}
             />
           )
@@ -92,7 +81,7 @@ const CallLayout: FC = () => {
         <ControlBar showControlBar={showControlBar} />
       </CallLayoutWrapper>
     );
-  return <div />;
+  return <></>;
 };
 
 export default CallLayout;
