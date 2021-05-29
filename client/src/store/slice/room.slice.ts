@@ -15,7 +15,7 @@ const initialState: State = {
   id: "",
   status: {
     showChat: false,
-    audio: true,
+    audio: false,
     camera: false,
   },
   users: [],

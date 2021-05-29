@@ -47,9 +47,9 @@ const CallLayout: FC = () => {
     navigator.mediaDevices
       .getUserMedia({ video: false, audio: true })
       .then((data) => {
-        // data.getAudioTracks().forEach((track) => {
-        //   data.removeTrack(track);
-        // });
+        data.getAudioTracks().forEach((track) => {
+          track.enabled = false;
+        });
         setStream(data);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
