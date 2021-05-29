@@ -20,6 +20,7 @@ import { CreateRoomValidationPipe } from './pipes/create-room-validation.pipe';
 import { JoinRoomValidationPipe } from './pipes/join-room-validation.pipe';
 import { CallerDto } from './dtos/caller.dto';
 import { CallerValidationPipe } from './pipes/caller.pipe';
+import { SwitchDeviceDto } from './dtos/switchDevice.dto';
 
 @WebSocketGateway({})
 export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -68,6 +69,8 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
         name: name,
         id: client.id,
         avatar,
+        mic: false,
+        camera: false,
       });
       await this.redisCacheService.set(roomId, JSON.stringify(room));
       const roomIds = JSON.parse(
@@ -95,7 +98,8 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       await this.redisCacheService.get(payload.roomId),
     );
     if (!room) throw new WsException({ message: 'Room Not Found' });
-
+    if (room.users.findIndex((user) => user.id === client.id) < 0)
+      throw new WsException({ message: 'Not Authorized' });
     client.to(payload.roomId).emit(`new-user-ready-call_${client.id}`);
   }
 
@@ -116,6 +120,25 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       client.to(roomId).emit('leave-room', { userId: client.id });
     }
     this.redisCacheService.del(client.id);
+  }
+
+  @SubscribeMessage('switch-device')
+  async handleSwitchDevice(client: Socket, payload: SwitchDeviceDto) {
+    const room: RoomDetails = JSON.parse(
+      await this.redisCacheService.get(payload.roomId),
+    );
+    if (!room) throw new WsException({ message: 'Room Not Found' });
+    const userIndex = room.users.findIndex((user) => user.id === client.id);
+    if (userIndex < 0) throw new WsException({ message: 'Not Authorized' });
+
+    room.users[userIndex][payload.type] = payload.enabled;
+    await this.redisCacheService.set(payload.roomId, JSON.stringify(room));
+
+    client.to(payload.roomId).emit('switch-device', {
+      userId: client.id,
+      type: payload.type,
+      enabled: payload.enabled,
+    });
   }
 
   handleConnection(client: Socket) {

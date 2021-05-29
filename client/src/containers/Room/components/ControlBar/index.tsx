@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Tooltip from "react-tooltip";
 import {
@@ -21,11 +21,12 @@ import { RootState } from "../../../../store";
 
 import {
   changeChatStatus as changeChatStatusAction,
-  turnOffCam,
-  turnOnCam,
-  turnOffMic,
-  turnOnMic,
+  switchCam,
+  switchMic,
+  userSwitchDevice,
 } from "../../../../store/slice/room.slice";
+
+import { socket } from "../../../../shared/socket/SocketProvider";
 
 interface PropTypes {
   showControlBar: boolean;
@@ -34,6 +35,15 @@ interface PropTypes {
 const ControlBar: FC<PropTypes> = ({ showControlBar }: PropTypes) => {
   const dispatch = useDispatch();
   const status = useSelector((state: RootState) => state.room.status);
+  const roomId = useSelector((state: RootState) => state.room.id);
+
+  useEffect((): any => {
+    socket.on("switch-device", (res) => {
+      dispatch(userSwitchDevice(res));
+    });
+
+    return () => socket.off("switch-device");
+  }, [dispatch]);
 
   function changeChatStatus(): void {
     dispatch(changeChatStatusAction());
@@ -44,19 +54,21 @@ const ControlBar: FC<PropTypes> = ({ showControlBar }: PropTypes) => {
   }
 
   function changeMicStatus(): void {
-    if (status.audio) {
-      dispatch(turnOffMic());
-    } else {
-      dispatch(turnOnMic());
-    }
+    socket.emit("switch-device", {
+      enabled: !status.audio,
+      type: "mic",
+      roomId,
+    });
+    dispatch(switchMic());
   }
 
   function changeCameraStatus(): void {
-    if (status.camera) {
-      dispatch(turnOffCam());
-    } else {
-      dispatch(turnOnCam());
-    }
+    socket.emit("switch-device", {
+      enabled: !status.audio,
+      type: "camera",
+      roomId,
+    });
+    dispatch(switchCam());
   }
 
   return (

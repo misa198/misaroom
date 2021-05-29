@@ -56,7 +56,6 @@ const CallLayoutItem: FC<PropTypes> = ({
   useEffect(() => {
     if (call) {
       call.on("stream", (remoteStream) => {
-        console.log(remoteStream.getTracks());
         setStream(remoteStream);
       });
     }
@@ -67,7 +66,6 @@ const CallLayoutItem: FC<PropTypes> = ({
       _call.answer(callerStream);
       _call.on("stream", (remoteStream) => {
         setStream(remoteStream);
-        console.log(remoteStream.getTracks());
       });
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -75,7 +73,7 @@ const CallLayoutItem: FC<PropTypes> = ({
 
   return (
     <CallLayoutItemWrapper ref={ref}>
-      <CallLayoutItemDetails video={stream?.getVideoTracks().length}>
+      <CallLayoutItemDetails video={user.camera}>
         <CallLayoutItemAvatarVoiceDetect>
           <CallLayoutItemAvatar width={width} height={height}>
             <CallLayoutItemAvatarImg src={user.avatar} />
@@ -83,18 +81,14 @@ const CallLayoutItem: FC<PropTypes> = ({
         </CallLayoutItemAvatarVoiceDetect>
       </CallLayoutItemDetails>
 
-      <CallLayoutItemVideoWrapper video={stream?.getVideoTracks().length}>
+      <CallLayoutItemVideoWrapper video={user.camera}>
         <CallLayoutItemVideo controls={false} ref={videoRef} />
       </CallLayoutItemVideoWrapper>
 
       <CallLayoutItemNameWrapper data-tip={user.name}>
         <CallLayoutItemName>{user.name}</CallLayoutItemName>
         <CallLayoutItemNameMic>
-          {stream?.getAudioTracks().length ? (
-            <Mic size={14} />
-          ) : (
-            <MicOff size={14} />
-          )}
+          {user.mic ? <Mic size={14} /> : <MicOff size={14} />}
         </CallLayoutItemNameMic>
       </CallLayoutItemNameWrapper>
       <Tooltip place="top" type="dark" effect="solid" />

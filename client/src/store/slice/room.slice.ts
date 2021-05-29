@@ -56,41 +56,37 @@ const slice = createSlice({
         users,
       };
     },
-    turnOnMic(state) {
+    switchMic(state) {
       return {
         ...state,
         status: {
           ...state.status,
-          audio: true,
+          audio: !state.status.audio,
         },
       };
     },
-    turnOffMic(state) {
+    switchCam(state) {
       return {
         ...state,
         status: {
           ...state.status,
-          audio: false,
+          camera: !state.status.camera,
         },
       };
     },
-    turnOffCam(state) {
-      return {
-        ...state,
-        status: {
-          ...state.status,
-          camera: false,
-        },
-      };
-    },
-    turnOnCam(state) {
-      return {
-        ...state,
-        status: {
-          ...state.status,
-          camera: true,
-        },
-      };
+    userSwitchDevice(
+      state,
+      action: PayloadAction<{
+        enabled: boolean;
+        type: "mic" | "camera";
+        userId: string;
+      }>
+    ) {
+      const index = state.users.findIndex(
+        (u) => u.id === action.payload.userId
+      );
+      state.users[index][action.payload.type] = action.payload.enabled;
+      return state;
     },
   },
 });
@@ -100,9 +96,8 @@ export const {
   setUsers,
   addNewUser,
   removeUser,
-  turnOnCam,
-  turnOffCam,
-  turnOnMic,
-  turnOffMic,
+  switchCam,
+  switchMic,
+  userSwitchDevice,
 } = slice.actions;
 export default slice.reducer;
