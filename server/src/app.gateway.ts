@@ -5,6 +5,7 @@ import {
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
+  WsException,
 } from '@nestjs/websockets';
 import { nanoid } from 'nanoid';
 import { Server, Socket } from 'socket.io';
@@ -17,6 +18,8 @@ import { RoomDetails } from './types/roomDetails';
 import { avatars } from './constants/avatar';
 import { CreateRoomValidationPipe } from './pipes/create-room-validation.pipe';
 import { JoinRoomValidationPipe } from './pipes/join-room-validation.pipe';
+import { CallerDto } from './dtos/caller.dto';
+import { CallerValidationPipe } from './pipes/caller.pipe';
 
 @WebSocketGateway({})
 export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -83,6 +86,17 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
         avatar,
       });
     }
+  }
+
+  @SubscribeMessage('ready-call')
+  @UsePipes(new CallerValidationPipe())
+  async handleCaller(client: Socket, payload: CallerDto) {
+    const room: RoomDetails = JSON.parse(
+      await this.redisCacheService.get(payload.roomId),
+    );
+    if (!room) throw new WsException({ message: 'Room Not Found' });
+
+    client.to(payload.roomId).emit(`new-user-ready-call_${client.id}`);
   }
 
   async handleDisconnect(client: Socket) {
