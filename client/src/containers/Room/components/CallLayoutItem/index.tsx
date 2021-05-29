@@ -35,18 +35,24 @@ const CallLayoutItem: FC<PropTypes> = ({
   const videoForAudioRef = useRef<HTMLVideoElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [audioStream, setAudioStream] = useState<MediaStream>();
+  const [listen, setListen] = useState<boolean>(true);
 
   useEffect((): any => {
     socket.on(`new-user-ready-call-audio_${user.id}`, ({ signal }) => {
       callerAudioPeer.signal(signal);
     });
+
+    return () => socket.off(`new-user-ready-call-audio_${user.id}`);
   }, [callerAudioPeer, user.id]);
 
   useEffect(() => {
-    callerAudioPeer.on("stream", (stream) => {
-      setAudioStream(stream);
-    });
-  }, [callerAudioPeer]);
+    if (listen) {
+      callerAudioPeer.on("stream", (stream, a) => {
+        setAudioStream(stream);
+        setListen(false);
+      });
+    }
+  }, [callerAudioPeer, listen]);
 
   useEffect(() => {
     if (audioStream && videoRef.current && !videoRef.current.srcObject) {

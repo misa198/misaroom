@@ -93,14 +93,28 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('ready-call-audio')
   @UsePipes(new CallerValidationPipe())
-  async handleCaller(client: Socket, payload: CallerDto) {
+  async handleAudioCaller(client: Socket, payload: CallerDto) {
     const room: RoomDetails = JSON.parse(
       await this.redisCacheService.get(payload.roomId),
     );
     if (!room) throw new WsException({ message: 'Room Not Found' });
     if (room.users.findIndex((user) => user.id === client.id) < 0)
       throw new WsException({ message: 'Not Authorized' });
-    client.to(payload.roomId).emit(`new-user-ready-call-audio_${client.id}`);
+    client.to(payload.roomId).emit(`new-user-ready-call-audio_${client.id}`, {
+      signal: payload.signal,
+    });
+  }
+
+  @SubscribeMessage('ready-call-video')
+  @UsePipes(new CallerValidationPipe())
+  async handleVideoCaller(client: Socket, payload: CallerDto) {
+    const room: RoomDetails = JSON.parse(
+      await this.redisCacheService.get(payload.roomId),
+    );
+    if (!room) throw new WsException({ message: 'Room Not Found' });
+    if (room.users.findIndex((user) => user.id === client.id) < 0)
+      throw new WsException({ message: 'Not Authorized' });
+    client.to(payload.roomId).emit(`new-user-ready-call-video_${client.id}`);
   }
 
   async handleDisconnect(client: Socket) {
