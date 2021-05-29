@@ -96,12 +96,20 @@ export const CallLayoutItemVideoWrapper = styled.div<{
 `;
 
 export const CallLayoutItemVideo = styled.video`
-  width: 100%;
-  height: 100%;
+  width: auto;
+  height: auto;
   max-width: 100%;
   max-height: 100%;
   transform: rotateY(180deg);
   -webkit-transform: rotateY(180deg); /* Safari and Chrome */
   -moz-transform: rotateY(180deg); /* Firefox */
+  pointer-events: none;
+`;
+
+export const CallLayoutItemVideoForAudioTrack = styled.video`
+  width: 0;
+  height: 0;
+  position: absolute;
+  visibility: hidden;
   pointer-events: none;
 `;

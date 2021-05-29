@@ -15,6 +15,7 @@ import {
   CallLayoutItemNameMic,
   CallLayoutItemVideoWrapper,
   CallLayoutItemVideo,
+  CallLayoutItemVideoForAudioTrack,
 } from "./styled";
 
 import { socket } from "../../../../shared/socket/SocketProvider";
@@ -23,53 +24,55 @@ import { User } from "../../../../types/User";
 
 interface PropTypes {
   user: User;
-  peer: Peer;
-  callerStream: MediaStream;
+  audioPeer: Peer;
+  callerAudioStream: MediaStream;
 }
 
 const CallLayoutItem: FC<PropTypes> = ({
   user,
-  peer,
-  callerStream,
+  audioPeer,
+  callerAudioStream,
 }: PropTypes) => {
   const { ref, width = 0, height = 0 } = useResize();
-  const [stream, setStream] = useState<MediaStream>();
   const [call, setCall] = useState<Peer.MediaConnection>();
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    if (stream && videoRef.current) {
-      videoRef.current.srcObject = stream;
-      videoRef.current.play();
-    }
-  }, [stream]);
+  const videoForAudioRef = useRef<HTMLVideoElement>(null);
+  const [audioStream, setAudioStream] = useState<MediaStream>();
 
   useEffect((): any => {
-    socket.on(`new-user-ready-call_${user.id}`, () => {
-      setCall(peer.call(user.id, callerStream));
+    socket.on(`new-user-ready-call-audio_${user.id}`, () => {
+      setCall(audioPeer.call(`audio_${user.id}`, callerAudioStream));
     });
 
-    return () => socket.off(`new-user-ready-call>${user.id}`);
+    return () => socket.off(`new-user-ready-call-audio_${user.id}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [peer, user.id]);
+  }, [audioPeer, user.id]);
 
   useEffect(() => {
     if (call) {
       call.on("stream", (remoteStream) => {
-        setStream(remoteStream);
+        setAudioStream(remoteStream);
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [call]);
 
   useEffect(() => {
-    peer.on("call", (_call) => {
-      _call.answer(callerStream);
+    audioPeer.on("call", (_call) => {
+      _call.answer(callerAudioStream);
       _call.on("stream", (remoteStream) => {
-        setStream(remoteStream);
+        setAudioStream(remoteStream);
       });
     });
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [peer]);
+  }, [audioPeer]);
+
+  useEffect(() => {
+    if (videoForAudioRef.current && audioStream) {
+      videoForAudioRef.current.srcObject = audioStream;
+      videoForAudioRef.current.play();
+    }
+  }, [audioStream]);
 
   return (
     <CallLayoutItemWrapper ref={ref}>
@@ -82,7 +85,8 @@ const CallLayoutItem: FC<PropTypes> = ({
       </CallLayoutItemDetails>
 
       <CallLayoutItemVideoWrapper video={user.camera}>
-        <CallLayoutItemVideo controls={false} ref={videoRef} />
+        <CallLayoutItemVideo controls={false} />
+        <CallLayoutItemVideoForAudioTrack ref={videoForAudioRef} autoPlay />
       </CallLayoutItemVideoWrapper>
 
       <CallLayoutItemNameWrapper data-tip={user.name}>

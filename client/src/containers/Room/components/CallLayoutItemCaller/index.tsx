@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef } from "react";
+import { FC, useRef } from "react";
 import { useSelector } from "react-redux";
 import useResize from "use-resize-observer";
 import Tooltip from "react-tooltip";
@@ -22,51 +22,13 @@ import { User } from "../../../../types/User";
 
 interface PropTypes {
   user: User;
-  stream: MediaStream;
 }
 
-const CallLayoutItemCaller: FC<PropTypes> = ({ user, stream }: PropTypes) => {
+const CallLayoutItemCaller: FC<PropTypes> = ({ user }: PropTypes) => {
   const { ref, width = 0, height = 0 } = useResize();
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const videoForAudioRef = useRef<HTMLVideoElement>(null);
 
   const status = useSelector((state: RootState) => state.room.status);
-
-  useEffect(() => {
-    if (status.audio && stream) {
-      stream.getAudioTracks().forEach((track) => {
-        track.enabled = true;
-      });
-    }
-    if (!status.audio && stream) {
-      stream.getAudioTracks().forEach((track) => {
-        track.enabled = false;
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status.audio]);
-
-  useEffect(() => {
-    if (status.camera && stream) {
-      navigator.mediaDevices.getUserMedia({ video: true }).then((st) => {
-        st.getVideoTracks().forEach((track) => stream?.addTrack(track));
-      });
-    }
-    if (!status.camera && stream) {
-      stream.getVideoTracks().forEach((track) => {
-        track.stop();
-        stream.removeTrack(track);
-      });
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status.camera]);
-
-  useEffect(() => {
-    if (stream && videoRef.current) {
-      videoRef.current.srcObject = stream;
-      videoRef.current.play();
-    }
-  }, [stream]);
 
   return (
     <CallLayoutItemWrapper ref={ref}>
@@ -79,7 +41,7 @@ const CallLayoutItemCaller: FC<PropTypes> = ({ user, stream }: PropTypes) => {
       </CallLayoutItemDetails>
 
       <CallLayoutItemVideoWrapper video={status.camera}>
-        <CallLayoutItemVideo controls={false} ref={videoRef} muted />
+        <CallLayoutItemVideo controls={false} ref={videoForAudioRef} muted />
       </CallLayoutItemVideoWrapper>
 
       <CallLayoutItemNameWrapper data-tip={user.name}>

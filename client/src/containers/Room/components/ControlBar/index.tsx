@@ -64,7 +64,7 @@ const ControlBar: FC<PropTypes> = ({ showControlBar }: PropTypes) => {
 
   function changeCameraStatus(): void {
     socket.emit("switch-device", {
-      enabled: !status.audio,
+      enabled: !status.camera,
       type: "camera",
       roomId,
     });

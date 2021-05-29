@@ -16,10 +16,11 @@ import { socket } from "../../../../shared/socket/SocketProvider";
 const CallLayout: FC = () => {
   const users = useSelector((state: RootState) => state.room.users);
   const roomId = useSelector((state: RootState) => state.room.id);
+  const status = useSelector((state: RootState) => state.room.status);
   const [layout, setLayout] = useState<Layout>({ columns: 0, rows: 0 });
   const [showControlBar, setShowControlBar] = useState<boolean>(false);
-  const [stream, setStream] = useState<MediaStream>();
-  const [peer, setPeer] = useState<Peer>();
+  const [audioStream, setAudioStream] = useState<MediaStream>();
+  const [audioPeer, setAudioPeer] = useState<Peer>();
 
   useEffect(() => {
     setLayout(calLayout(users.length));
@@ -37,8 +38,8 @@ const CallLayout: FC = () => {
   }, [showControlBar]);
 
   useEffect(() => {
-    setPeer(new Peer(socket.id));
-    socket.emit("ready-call", {
+    setAudioPeer(new Peer(`audio_${socket.id}`));
+    socket.emit("ready-call-audio", {
       roomId,
     });
   }, [roomId]);
@@ -50,30 +51,40 @@ const CallLayout: FC = () => {
         data.getAudioTracks().forEach((track) => {
           track.enabled = false;
         });
-        setStream(data);
+        setAudioStream(data);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (status.audio && audioStream) {
+      audioStream.getAudioTracks().forEach((track) => {
+        track.enabled = true;
+      });
+    }
+    if (!status.audio && audioStream) {
+      audioStream.getAudioTracks().forEach((track) => {
+        track.enabled = false;
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status.audio]);
 
   function changeControlBar(): void {
     setShowControlBar(true);
   }
 
-  if (peer && stream)
+  if (audioPeer && audioStream)
     return (
       <CallLayoutWrapper layout={layout} onMouseMove={changeControlBar}>
         {users.map((user, index) =>
           user.id === socket.id ? (
-            <CallLayoutItemCaller
-              stream={stream}
-              user={user}
-              key={`user_${index.toFixed()}`}
-            />
+            <CallLayoutItemCaller user={user} key={`user_${index.toFixed()}`} />
           ) : (
             <CallLayoutItem
-              callerStream={stream}
+              callerAudioStream={audioStream}
               user={user}
-              peer={peer}
+              audioPeer={audioPeer}
               key={`user_${index.toFixed()}`}
             />
           )
