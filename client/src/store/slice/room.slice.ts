@@ -9,6 +9,7 @@ interface State {
     audio: boolean;
   };
   users: User[];
+  imageViewer: string;
 }
 
 const initialState: State = {
@@ -19,6 +20,7 @@ const initialState: State = {
     camera: false,
   },
   users: [],
+  imageViewer: "",
 };
 
 const slice = createSlice({
@@ -88,6 +90,18 @@ const slice = createSlice({
       state.users[index][action.payload.type] = action.payload.enabled;
       return state;
     },
+    setImageViewerImage(state: State, action: PayloadAction<string>) {
+      return {
+        ...state,
+        imageViewer: action.payload,
+      };
+    },
+    clearImageViewerImage(state) {
+      return {
+        ...state,
+        imageViewer: "",
+      };
+    },
   },
 });
 
@@ -99,5 +113,7 @@ export const {
   switchCam,
   switchMic,
   userSwitchDevice,
+  setImageViewerImage,
+  clearImageViewerImage,
 } = slice.actions;
 export default slice.reducer;

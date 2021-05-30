@@ -72,4 +72,5 @@ export const ChatMessageContentImage = styled.img`
   max-width: 150px;
   height: auto;
   border-radius: 0.35rem;
+  cursor: pointer;
 `;
