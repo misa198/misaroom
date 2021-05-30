@@ -1,6 +1,8 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { useFormik } from "formik";
 import * as yup from "yup";
+import { nanoid } from "nanoid";
 import { Play, Image } from "react-feather";
 
 import {
@@ -11,6 +13,12 @@ import {
   ChatInputButton,
 } from "./styled";
 
+import { socket } from "../../../../shared/socket/SocketProvider";
+
+import { RootState } from "../../../../store";
+import { User } from "../../../../types/User";
+import { Message, MessageType } from "../../../../types/Message";
+
 const schema = yup.object().shape({
   content: yup.string().required(),
 });
@@ -20,10 +28,29 @@ const initialValues = {
 };
 
 const ChatInput: FC = () => {
+  const users = useSelector((state: RootState) => state.room.users);
   const [hideImageButton, setHideImageButton] = useState(false);
+  const [user, setUser] = useState<User | undefined>();
+
+  useEffect(() => {
+    const sender = users.find((u) => u.id === socket.id);
+    setUser(sender);
+  }, [users]);
 
   function switchImageButton(): void {
     setHideImageButton(!hideImageButton);
+  }
+
+  function sendMessage(content: string, type: MessageType): void {
+    if (user) {
+      const id = nanoid(64);
+      const message = {
+        id,
+        content,
+        type,
+      };
+      socket.emit("send-message", message);
+    }
   }
 
   const formik = useFormik({
@@ -31,7 +58,7 @@ const ChatInput: FC = () => {
     validationSchema: schema,
     enableReinitialize: true,
     onSubmit: (formValues, { resetForm }) => {
-      console.log(formValues);
+      sendMessage(formValues.content, "text");
       resetForm();
     },
   });

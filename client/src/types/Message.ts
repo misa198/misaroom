@@ -1,8 +1,11 @@
+export type MessageType = "text" | "image";
+
 export interface Message {
   id: string;
+  senderId: string;
   sender: string;
   avatar: string;
-  time: string;
+  time: Date;
   content: string;
-  type: "text" | "image";
+  type: MessageType;
 }
