@@ -1,4 +1,4 @@
-import { FC, useRef, useState } from "react";
+import { FC, useState } from "react";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { Play, Image } from "react-feather";
@@ -15,8 +15,11 @@ const schema = yup.object().shape({
   content: yup.string().required(),
 });
 
+const initialValues = {
+  content: "",
+};
+
 const ChatInput: FC = () => {
-  const inputRef = useRef<HTMLInputElement>(null);
   const [hideImageButton, setHideImageButton] = useState(false);
 
   function switchImageButton(): void {
@@ -24,11 +27,12 @@ const ChatInput: FC = () => {
   }
 
   const formik = useFormik({
-    initialValues: { content: "" },
+    initialValues,
     validationSchema: schema,
-    onSubmit: (formValues) => {
+    enableReinitialize: true,
+    onSubmit: (formValues, { resetForm }) => {
       console.log(formValues);
-      if (inputRef.current) inputRef.current.value = "";
+      resetForm();
     },
   });
 
@@ -47,9 +51,8 @@ const ChatInput: FC = () => {
           value={formik.values.content}
           id="content"
           name="content"
-          ref={inputRef}
         />
-        <ChatInputButton>
+        <ChatInputButton type="submit">
           <Play size={18} />
         </ChatInputButton>
       </ChatInputForm>
