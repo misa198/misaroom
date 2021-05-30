@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const ChatImageViewerWrapper = styled.div<{ display: boolean }>`
+export const ChatImageViewerWrapper = styled.div<{ display: number }>`
   position: absolute;
   top: 0;
   left: 0;
@@ -10,7 +10,7 @@ export const ChatImageViewerWrapper = styled.div<{ display: boolean }>`
   background-color: rgba(0, 0, 0, 0.9);
   transition: all 300ms;
   ${(props) =>
-    props.display
+    props.display === 1
       ? `
         opacity: 1;
         visibility: unset;
@@ -30,11 +30,11 @@ export const ChatImageViewerContainer = styled.div`
   align-items: center;
 `;
 
-export const ChatImageViewerImage = styled.img<{ display: boolean }>`
+export const ChatImageViewerImage = styled.img<{ display: number }>`
   max-width: 90vw;
   max-height: 90vh;
   ${(props) =>
-    props.display ? "animation: chatImageViewerImageAppear 300ms;" : ""}
+    props.display === 1 ? "animation: chatImageViewerImageAppear 300ms;" : ""};
 
   @keyframes chatImageViewerImageAppear {
     0% {
