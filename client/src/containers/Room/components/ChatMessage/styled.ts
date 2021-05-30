@@ -56,6 +56,8 @@ export const ChatMessageContentWrapper = styled.div<{
 export const ChatMessageContent = styled.p`
   font-weight: 300;
   font-size: 0.9rem;
+  max-width: 180px;
+  word-break: break-word;
 `;
 
 export const ChatMessageContentImage = styled.img`
