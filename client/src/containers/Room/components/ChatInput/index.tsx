@@ -1,10 +1,36 @@
-import { FC } from "react";
-import { ChatInputWrapper, ChatInputForm } from "./styled";
+import { FC, useState } from "react";
+import { Play, Image } from "react-feather";
+
+import {
+  ChatInputWrapper,
+  ChatInputImageButton,
+  ChatInputForm,
+  ChatInputTextField,
+  ChatInputButton,
+} from "./styled";
 
 const ChatInput: FC = () => {
+  const [hideImageButton, setHideImageButton] = useState(false);
+
+  function switchImageButton(): void {
+    setHideImageButton(!hideImageButton);
+  }
+
   return (
     <ChatInputWrapper>
-      <ChatInputForm />
+      <ChatInputImageButton hide={hideImageButton}>
+        <Image size={18} />
+      </ChatInputImageButton>
+      <ChatInputForm>
+        <ChatInputTextField
+          placeholder="text a message..."
+          onFocus={switchImageButton}
+          onBlur={switchImageButton}
+        />
+        <ChatInputButton>
+          <Play size={18} />
+        </ChatInputButton>
+      </ChatInputForm>
     </ChatInputWrapper>
   );
 };
