@@ -7,6 +7,7 @@ export const ChatConversationWrapper = styled.div`
   flex-direction: column;
   overflow-y: scroll;
   overflow-x: hidden;
+  padding-top: 14px;
 
   ::-webkit-scrollbar {
     width: 5px;
