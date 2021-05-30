@@ -39,12 +39,9 @@ export const ChatMessageSender = styled.div<{ isSender: boolean }>`
   pointer-events: none;
 `;
 
-export const ChatMessageContentWrapper = styled.div<{
-  isSender: boolean;
-  isImageContent?: boolean;
-}>`
+export const ChatMessageContentWrapper = styled.div<{ isSender: boolean }>`
   position: relative;
-  ${(props) => (props.isImageContent ? "" : "padding: 8px")};
+  padding: 8px;
   background: ${(props) =>
     props.isSender
       ? `
@@ -57,19 +54,9 @@ export const ChatMessageContentWrapper = styled.div<{
       `
       : "rgba(255,255,255,0.2)"};
   border-radius: 0.35rem;
-  background: ${(props) => (props.isImageContent ? "transparent" : "")};
-  height: fit-content;
 `;
 
 export const ChatMessageContent = styled.p`
   font-weight: 300;
   font-size: 0.9rem;
-`;
-
-export const ChatMessageContentImage = styled.img`
-  width: 100%;
-  height: 100%;
-  max-width: 150px;
-  height: auto;
-  border-radius: 0.35rem;
 `;

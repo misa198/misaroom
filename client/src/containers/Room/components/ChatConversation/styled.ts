@@ -4,7 +4,7 @@ export const ChatConversationWrapper = styled.div`
   width: 100%;
   flex: 1;
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: column;
   overflow-y: scroll;
   overflow-x: hidden;
 

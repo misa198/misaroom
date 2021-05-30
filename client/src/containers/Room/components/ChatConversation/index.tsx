@@ -3,6 +3,7 @@ import { FC } from "react";
 import { ChatConversationWrapper } from "./styled";
 
 import ChatMessage from "../ChatMessage";
+import ChatMessageImage from "../ChatMessageImage";
 
 const ChatConversation: FC = () => {
   return (
@@ -36,6 +37,7 @@ const ChatConversation: FC = () => {
       <ChatMessage />
       <ChatMessage />
       <ChatMessage />
+      <ChatMessageImage />
     </ChatConversationWrapper>
   );
 };
