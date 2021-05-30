@@ -46,10 +46,14 @@ const ChatMessage: FC<PropTypes> = ({ message }: PropTypes) => {
       </ChatMessageContentWrapper>
       <Tooltip effect="solid" place="top" />
       <ChatMessageButtonsWrapper isSender={isSender}>
-        <ChatMessageButton data-tip="Delete">
-          <Trash size={16} />
-        </ChatMessageButton>
-        <Tooltip effect="solid" place="top" />
+        {isSender && (
+          <>
+            <ChatMessageButton data-tip="Delete">
+              <Trash size={16} />
+            </ChatMessageButton>
+            <Tooltip effect="solid" place="top" />
+          </>
+        )}
       </ChatMessageButtonsWrapper>
     </ChatMessageWrapper>
   );
