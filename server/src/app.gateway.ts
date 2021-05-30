@@ -145,7 +145,22 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('send-message')
-  async handleSendMessage(client: Socket, payload: SendMessageDto) {}
+  async handleSendMessage(client: Socket, payload: SendMessageDto) {
+    const { room, userIndex } = await this.authenticate(
+      client.id,
+      payload.roomId,
+    );
+    const message = {
+      senderId: client.id,
+      sender: room.users[userIndex].name,
+      avatar: room.users[userIndex].avatar,
+      id: payload.id,
+      content: payload.content,
+      time: new Date(),
+      type: 'text',
+    };
+    client.to(payload.roomId).emit('new-message', message);
+  }
 
   handleConnection(client: Socket) {
     client.emit('connected');
