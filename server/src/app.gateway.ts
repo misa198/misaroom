@@ -13,7 +13,7 @@ import { Server, Socket } from 'socket.io';
 import { CreateRoomDto } from './dtos/create-room.dto';
 import { JoinRoom } from './dtos/join-room.dto';
 import { RedisCacheService } from './redis-cache/redis-cache.service';
-import { RoomDetails } from './types/roomDetails';
+import { RoomDetails, User } from './types/roomDetails';
 
 import { avatars } from './constants/avatar';
 import { CreateRoomValidationPipe } from './pipes/create-room-validation.pipe';
@@ -21,6 +21,7 @@ import { JoinRoomValidationPipe } from './pipes/join-room-validation.pipe';
 import { CallerDto } from './dtos/caller.dto';
 import { CallerValidationPipe } from './pipes/caller.pipe';
 import { SwitchDeviceDto } from './dtos/switchDevice.dto';
+import { SendMessageDto } from './dtos/send-message.dto';
 
 @WebSocketGateway({})
 export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -94,12 +95,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('ready-call-audio')
   @UsePipes(new CallerValidationPipe())
   async handleAudioCaller(client: Socket, payload: CallerDto) {
-    const room: RoomDetails = JSON.parse(
-      await this.redisCacheService.get(payload.roomId),
-    );
-    if (!room) throw new WsException({ message: 'Room Not Found' });
-    if (room.users.findIndex((user) => user.id === client.id) < 0)
-      throw new WsException({ message: 'Not Authorized' });
+    await this.authenticate(client.id, payload.roomId);
     client.to(payload.roomId).emit(`new-user-ready-call-audio_${client.id}`, {
       signal: payload.signal,
     });
@@ -108,12 +104,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('ready-call-video')
   @UsePipes(new CallerValidationPipe())
   async handleVideoCaller(client: Socket, payload: CallerDto) {
-    const room: RoomDetails = JSON.parse(
-      await this.redisCacheService.get(payload.roomId),
-    );
-    if (!room) throw new WsException({ message: 'Room Not Found' });
-    if (room.users.findIndex((user) => user.id === client.id) < 0)
-      throw new WsException({ message: 'Not Authorized' });
+    await this.authenticate(client.id, payload.roomId);
     client.to(payload.roomId).emit(`new-user-ready-call-video_${client.id}`);
   }
 
@@ -138,12 +129,10 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('switch-device')
   async handleSwitchDevice(client: Socket, payload: SwitchDeviceDto) {
-    const room: RoomDetails = JSON.parse(
-      await this.redisCacheService.get(payload.roomId),
+    const { room, userIndex } = await this.authenticate(
+      client.id,
+      payload.roomId,
     );
-    if (!room) throw new WsException({ message: 'Room Not Found' });
-    const userIndex = room.users.findIndex((user) => user.id === client.id);
-    if (userIndex < 0) throw new WsException({ message: 'Not Authorized' });
 
     room.users[userIndex][payload.type] = payload.enabled;
     await this.redisCacheService.set(payload.roomId, JSON.stringify(room));
@@ -154,6 +143,9 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       enabled: payload.enabled,
     });
   }
+
+  @SubscribeMessage('send-message')
+  async handleSendMessage(client: Socket, payload: SendMessageDto) {}
 
   handleConnection(client: Socket) {
     client.emit('connected');
@@ -173,5 +165,24 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   private randomAvatar(): string {
     return avatars[Math.floor(Math.random() * avatars.length)];
+  }
+
+  private async authenticate(
+    userId: string,
+    roomId: string,
+  ): Promise<{
+    room: RoomDetails;
+    userIndex: number;
+  }> {
+    const room: RoomDetails = JSON.parse(
+      await this.redisCacheService.get(roomId),
+    );
+    if (!room) throw new WsException({ message: 'Room Not Found' });
+    const userIndex = room.users.findIndex((user) => user.id === userId);
+    if (userIndex < 0) throw new WsException({ message: 'Not Authorized' });
+    return {
+      room,
+      userIndex,
+    };
   }
 }
