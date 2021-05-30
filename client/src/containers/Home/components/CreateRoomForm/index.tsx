@@ -62,6 +62,7 @@ const CreateRoomForm: FC = () => {
               placeholder="name"
               onChange={formik.handleChange}
               value={formik.values.name}
+              autoComplete="off"
             />
             {formik.errors["name"] && formik.touched["name"] ? (
               <BasicFormFieldError>{formik.errors["name"]}</BasicFormFieldError>
@@ -75,6 +76,7 @@ const CreateRoomForm: FC = () => {
               placeholder="password (optional)"
               onChange={formik.handleChange}
               value={formik.values.password}
+              autoComplete="off"
             />
             {formik.errors["password"] && formik.touched["password"] ? (
               <BasicFormFieldError>
