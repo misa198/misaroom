@@ -1,13 +1,5 @@
 import styled from "styled-components";
 
-export const ChatMessageWrapper = styled.div<{ isSender: boolean }>`
-  width: 100%;
-  display: flex;
-  flex-direction: ${(props) => (props.isSender ? "row-reverse" : "row")};
-  align-items: flex-start;
-  padding: ${(props) => (props.isSender ? "8px 10px" : "12px 10px")};
-`;
-
 export const ChatMessageAvatarWrapper = styled.div<{ isSender: boolean }>`
   padding: 5px;
   background-image: linear-gradient(
@@ -73,4 +65,32 @@ export const ChatMessageContentImage = styled.img`
   height: auto;
   border-radius: 0.35rem;
   cursor: pointer;
+`;
+
+export const ChatMessageButtonsWrapper = styled.div<{ isSender: boolean }>`
+  height: 100%;
+  display: flex;
+  align-items: center;
+  ${(props) => (props.isSender ? "margin-right: 10px;" : "margin-left: 10px;")};
+  visibility: hidden;
+`;
+
+export const ChatMessageButton = styled.button`
+  color: rgba(255, 255, 255, 0.2);
+  background-color: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+`;
+
+export const ChatMessageWrapper = styled.div<{ isSender: boolean }>`
+  width: 100%;
+  display: flex;
+  flex-direction: ${(props) => (props.isSender ? "row-reverse" : "row")};
+  align-items: flex-start;
+  padding: ${(props) => (props.isSender ? "8px 10px" : "12px 10px")};
+
+  &:hover ${ChatMessageButtonsWrapper} {
+    visibility: unset !important;
+  }
 `;

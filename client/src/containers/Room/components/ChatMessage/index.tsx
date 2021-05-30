@@ -1,4 +1,5 @@
 import { FC, useState } from "react";
+import { Trash } from "react-feather";
 import Tooltip from "react-tooltip";
 
 import {
@@ -8,6 +9,8 @@ import {
   ChatMessageSender,
   ChatMessageContentWrapper,
   ChatMessageContent,
+  ChatMessageButtonsWrapper,
+  ChatMessageButton,
 } from "./styled";
 
 const ChatMessage: FC = () => {
@@ -26,6 +29,12 @@ const ChatMessage: FC = () => {
         <ChatMessageContent>csndcksdcnk</ChatMessageContent>
       </ChatMessageContentWrapper>
       <Tooltip effect="solid" place="top" />
+      <ChatMessageButtonsWrapper isSender={isSender}>
+        <ChatMessageButton data-tip="Delete">
+          <Trash size={16} />
+        </ChatMessageButton>
+        <Tooltip effect="solid" place="top" />
+      </ChatMessageButtonsWrapper>
     </ChatMessageWrapper>
   );
 };
