@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { Trash } from "react-feather";
 import Tooltip from "react-tooltip";
 
@@ -13,20 +13,36 @@ import {
   ChatMessageButton,
 } from "./styled";
 
-const ChatMessage: FC = () => {
+import { Message } from "../../../../types/Message";
+
+import { socket } from "../../../../shared/socket/SocketProvider";
+
+interface PropTypes {
+  message: Message;
+}
+
+const ChatMessage: FC<PropTypes> = ({ message }: PropTypes) => {
   const [isSender, setIsSender] = useState(false);
+
+  useEffect(() => {
+    setIsSender(message.senderId === socket.id);
+  }, [message.senderId]);
 
   return (
     <ChatMessageWrapper isSender={isSender}>
       <ChatMessageAvatarWrapper isSender={isSender}>
-        <ChatMessageAvatar src="https://res.cloudinary.com/dumfvnj9f/image/upload/v1622008721/animals/wombat_uk5z9h.png" />
+        <ChatMessageAvatar src={message.avatar} />
       </ChatMessageAvatarWrapper>
       <ChatMessageContentWrapper
         isSender={isSender}
-        data-tip={`${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`}
+        data-tip={`${new Date(message.time).toLocaleDateString()} ${new Date(
+          message.time
+        ).toLocaleTimeString()}`}
       >
-        <ChatMessageSender isSender={isSender}>cds</ChatMessageSender>
-        <ChatMessageContent>csndcksdcnk</ChatMessageContent>
+        <ChatMessageSender isSender={isSender}>
+          {message.sender}
+        </ChatMessageSender>
+        <ChatMessageContent>{message.content}</ChatMessageContent>
       </ChatMessageContentWrapper>
       <Tooltip effect="solid" place="top" />
       <ChatMessageButtonsWrapper isSender={isSender}>

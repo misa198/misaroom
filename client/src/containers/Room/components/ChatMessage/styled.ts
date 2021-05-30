@@ -29,6 +29,10 @@ export const ChatMessageSender = styled.div<{ isSender: boolean }>`
   font-size: 12px;
   color: rgba(255, 255, 255, 0.5);
   pointer-events: none;
+  width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 export const ChatMessageContentWrapper = styled.div<{
