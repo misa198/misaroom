@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Trash } from "react-feather";
 import Tooltip from "react-tooltip";
 
@@ -15,6 +15,7 @@ import {
 } from "./styled";
 
 import { Message } from "../../../../types/Message";
+import { RootState } from "../../../../store";
 
 import { socket } from "../../../../shared/socket/SocketProvider";
 
@@ -26,6 +27,7 @@ interface PropTypes {
 
 const ChatMessage: FC<PropTypes> = ({ message }: PropTypes) => {
   const dispatch = useDispatch();
+  const roomId = useSelector((state: RootState) => state.room.id);
   const [isSender, setIsSender] = useState(false);
 
   useEffect(() => {
@@ -33,6 +35,10 @@ const ChatMessage: FC<PropTypes> = ({ message }: PropTypes) => {
   }, [message.senderId]);
 
   function removeMessage(): void {
+    socket.emit("remove-message", {
+      messageId: message.id,
+      roomId,
+    });
     dispatch(deleteMessage(message.id));
   }
 

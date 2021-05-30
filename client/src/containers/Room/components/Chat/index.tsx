@@ -14,6 +14,7 @@ import ChatImageViewer from "../ChatImageViewer";
 import {
   insertMessage,
   increaseNotification,
+  deleteMessage,
 } from "../../../../store/slice/room.slice";
 
 import { socket } from "../../../../shared/socket/SocketProvider";
@@ -25,6 +26,7 @@ const Chat: FC = () => {
   const showChat = useSelector(
     (state: RootState) => state.room.status.showChat
   );
+  const messages = useSelector((state: RootState) => state.room.messages);
   const [play] = useSound(messageNotificationSound);
 
   useEffect((): any => {
@@ -36,6 +38,17 @@ const Chat: FC = () => {
 
     return () => socket.off("new-message");
   }, [dispatch, play, showChat]);
+
+  useEffect((): any => {
+    socket.on("remove-message", (res) => {
+      const foundMessage = messages.find((m) => m.id === res.messageId);
+      if (foundMessage && foundMessage.senderId === res.userId) {
+        dispatch(deleteMessage(res.messageId));
+      }
+    });
+
+    return () => socket.off("remove-message");
+  }, [dispatch, messages, play, showChat]);
 
   return (
     <ChatWrapper showChat={showChat}>
