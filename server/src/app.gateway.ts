@@ -12,16 +12,22 @@ import { Server, Socket } from 'socket.io';
 
 import { CreateRoomDto } from './dtos/create-room.dto';
 import { JoinRoom } from './dtos/join-room.dto';
-import { RedisCacheService } from './redis-cache/redis-cache.service';
-import { RoomDetails, User } from './types/roomDetails';
-
-import { avatars } from './constants/avatar';
-import { CreateRoomValidationPipe } from './pipes/create-room-validation.pipe';
-import { JoinRoomValidationPipe } from './pipes/join-room-validation.pipe';
-import { CallerDto } from './dtos/caller.dto';
-import { CallerValidationPipe } from './pipes/caller.pipe';
 import { SwitchDeviceDto } from './dtos/switchDevice.dto';
 import { SendMessageDto } from './dtos/send-message.dto';
+import { CallerDto } from './dtos/caller.dto';
+import { RemoveMessageDto } from './dtos/remove-message.dto';
+
+import { RedisCacheService } from './redis-cache/redis-cache.service';
+import { RoomDetails } from './types/roomDetails';
+
+import { avatars } from './constants/avatar';
+
+import { CreateRoomValidationPipe } from './pipes/create-room-validation.pipe';
+import { JoinRoomValidationPipe } from './pipes/join-room-validation.pipe';
+import { CallerValidationPipe } from './pipes/caller.pipe';
+import { RemoveMessageValidationPipe } from './pipes/remove-message.pipe';
+import { SendMessageValidationPipe } from './pipes/send-message.pipe';
+import { SwitchDeviceValidationPipe } from './pipes/switch-device.pipe';
 
 @WebSocketGateway({})
 export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -128,6 +134,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('switch-device')
+  @UsePipes(new SwitchDeviceValidationPipe())
   async handleSwitchDevice(client: Socket, payload: SwitchDeviceDto) {
     const { room, userIndex } = await this.authenticate(
       client.id,
@@ -145,6 +152,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('send-message')
+  @UsePipes(new SendMessageValidationPipe())
   async handleSendMessage(client: Socket, payload: SendMessageDto) {
     const { room, userIndex } = await this.authenticate(
       client.id,
@@ -160,6 +168,16 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       type: 'text',
     };
     client.to(payload.roomId).emit('new-message', message);
+  }
+
+  @SubscribeMessage('remove-message')
+  @UsePipes(new RemoveMessageValidationPipe())
+  async handleRemoveMessage(client: Socket, payload: RemoveMessageDto) {
+    await this.authenticate(client.id, payload.roomId);
+    client.to(payload.roomId).emit('remove-message', {
+      messageId: payload.messageId,
+      userId: client.id,
+    });
   }
 
   handleConnection(client: Socket) {

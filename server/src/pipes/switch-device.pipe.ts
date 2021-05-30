@@ -3,15 +3,15 @@ import { WsException } from '@nestjs/websockets';
 import * as joi from 'joi';
 
 @Injectable()
-export class SendMessageValidationPipe implements PipeTransform {
+export class SwitchDeviceValidationPipe implements PipeTransform {
   transform(values: any, { metatype }: ArgumentMetadata) {
     if (!metatype || this.toValidate(metatype)) {
       return values;
     } else {
       const schema = joi.object({
         roomId: joi.string().length(32).required(),
-        id: joi.string().length(64).required(),
-        content: joi.string().required(),
+        enabled: joi.boolean().required(),
+        type: joi.string().allow('mic', 'camera').required(),
       });
       const { error, value } = schema.validate(values);
       if (!value)
