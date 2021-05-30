@@ -29,7 +29,7 @@ const ChatMessageImage: FC = () => {
         <ChatMessageAvatar src="https://res.cloudinary.com/dumfvnj9f/image/upload/v1622008721/animals/wombat_uk5z9h.png" />
       </ChatMessageAvatarWrapper>
       <ChatMessageContentWrapper
-        data-tip={new Date()}
+        data-tip={`${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`}
         isImageContent
         isSender={isSender}
       >
