@@ -17,7 +17,7 @@ import { socket } from "../../../../shared/socket/SocketProvider";
 
 import { RootState } from "../../../../store";
 import { User } from "../../../../types/User";
-import { Message, MessageType } from "../../../../types/Message";
+import { MessageType } from "../../../../types/Message";
 
 const schema = yup.object().shape({
   content: yup.string().required(),
@@ -29,6 +29,7 @@ const initialValues = {
 
 const ChatInput: FC = () => {
   const users = useSelector((state: RootState) => state.room.users);
+  const roomId = useSelector((state: RootState) => state.room.id);
   const [hideImageButton, setHideImageButton] = useState(false);
   const [user, setUser] = useState<User | undefined>();
 
@@ -45,9 +46,9 @@ const ChatInput: FC = () => {
     if (user) {
       const id = nanoid(64);
       const message = {
+        roomId,
         id,
         content,
-        type,
       };
       socket.emit("send-message", message);
     }
@@ -78,6 +79,7 @@ const ChatInput: FC = () => {
           value={formik.values.content}
           id="content"
           name="content"
+          autoComplete="off"
         />
         <ChatInputButton type="submit">
           <Play size={18} />
