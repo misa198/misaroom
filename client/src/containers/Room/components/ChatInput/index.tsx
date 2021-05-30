@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { nanoid } from "nanoid";
@@ -13,11 +13,12 @@ import {
   ChatInputButton,
 } from "./styled";
 
+import { insertMessage } from "../../../../store/slice/room.slice";
+
 import { socket } from "../../../../shared/socket/SocketProvider";
 
 import { RootState } from "../../../../store";
 import { User } from "../../../../types/User";
-import { MessageType } from "../../../../types/Message";
 
 const schema = yup.object().shape({
   content: yup.string().required(),
@@ -28,6 +29,7 @@ const initialValues = {
 };
 
 const ChatInput: FC = () => {
+  const dispatch = useDispatch();
   const users = useSelector((state: RootState) => state.room.users);
   const roomId = useSelector((state: RootState) => state.room.id);
   const [hideImageButton, setHideImageButton] = useState(false);
@@ -42,7 +44,7 @@ const ChatInput: FC = () => {
     setHideImageButton(!hideImageButton);
   }
 
-  function sendMessage(content: string, type: MessageType): void {
+  function sendMessage(content: string): void {
     if (user) {
       const id = nanoid(64);
       const message = {
@@ -51,6 +53,16 @@ const ChatInput: FC = () => {
         content,
       };
       socket.emit("send-message", message);
+      dispatch(
+        insertMessage({
+          ...message,
+          sender: user.name,
+          senderId: user.id,
+          avatar: user.avatar,
+          type: "text",
+          time: new Date().toString(),
+        })
+      );
     }
   }
 
@@ -59,7 +71,8 @@ const ChatInput: FC = () => {
     validationSchema: schema,
     enableReinitialize: true,
     onSubmit: (formValues, { resetForm }) => {
-      sendMessage(formValues.content, "text");
+      sendMessage(formValues.content);
+
       resetForm();
     },
   });

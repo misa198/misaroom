@@ -1,5 +1,5 @@
-import { FC, memo } from "react";
-import { useSelector } from "react-redux";
+import { FC, memo, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 
 import { RootState } from "../../../../store";
 
@@ -10,11 +10,20 @@ import ChatConversation from "../ChatConversation";
 import ChatInput from "../ChatInput";
 import ChatImageViewer from "../ChatImageViewer";
 
+import { insertMessage } from "../../../../store/slice/room.slice";
+import { socket } from "../../../../shared/socket/SocketProvider";
+
 const Chat: FC = () => {
+  const dispatch = useDispatch();
   const showChat = useSelector(
     (state: RootState) => state.room.status.showChat
   );
-  const imageViewer = useSelector((state: RootState) => state.room.imageViewer);
+
+  useEffect((): any => {
+    socket.on("new-message", (message) => {
+      dispatch(insertMessage(message));
+    });
+  }, [dispatch]);
 
   return (
     <ChatWrapper showChat={showChat}>

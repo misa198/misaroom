@@ -5,7 +5,7 @@ export interface Message {
   senderId: string;
   sender: string;
   avatar: string;
-  time: Date;
+  time: string;
   content: string;
   type: MessageType;
 }
