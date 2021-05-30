@@ -18,7 +18,10 @@ const ChatMessage: FC = () => {
       <ChatMessageAvatarWrapper isSender={isSender}>
         <ChatMessageAvatar src="https://res.cloudinary.com/dumfvnj9f/image/upload/v1622008721/animals/wombat_uk5z9h.png" />
       </ChatMessageAvatarWrapper>
-      <ChatMessageContentWrapper isSender={isSender} data-tip={new Date()}>
+      <ChatMessageContentWrapper
+        isSender={isSender}
+        data-tip={`${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`}
+      >
         <ChatMessageSender isSender={isSender}>cds</ChatMessageSender>
         <ChatMessageContent>csndcksdcnk</ChatMessageContent>
       </ChatMessageContentWrapper>
