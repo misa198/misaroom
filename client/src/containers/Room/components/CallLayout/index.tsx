@@ -42,7 +42,7 @@ const CallLayout: FC = () => {
 
   useEffect(() => {
     navigator.mediaDevices
-      .getUserMedia({ audio: true, video: true })
+      .getUserMedia({ audio: true, video: false })
       .then((stream) => {
         stream.getAudioTracks().forEach((track) => {
           track.enabled = false;
