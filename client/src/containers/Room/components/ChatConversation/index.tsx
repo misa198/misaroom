@@ -21,7 +21,7 @@ const ChatConversation: FC = () => {
   return (
     <ChatConversationWrapper ref={conversationRef}>
       {messages.map((message) => {
-        return message.type === "text" ? (
+        return message.type === "text" || message.type === "removed" ? (
           <ChatMessage message={message} key={message.id} />
         ) : (
           <ChatMessageImage key={message.id} />

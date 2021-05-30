@@ -113,6 +113,18 @@ const slice = createSlice({
         messages: [...state.messages, action.payload],
       };
     },
+    deleteMessage(state: State, action: PayloadAction<string>) {
+      const messageIndex = state.messages.findIndex(
+        (m) => m.id === action.payload
+      );
+      const messages = JSON.parse(JSON.stringify(state.messages));
+      messages[messageIndex].content = "This message was removed";
+      messages[messageIndex].type = "removed";
+      return {
+        ...state,
+        messages: [...messages],
+      };
+    },
     setImageViewerImage(state: State, action: PayloadAction<string>) {
       return {
         ...state,
@@ -139,6 +151,7 @@ export const {
   userSwitchDevice,
   increaseNotification,
   insertMessage,
+  deleteMessage,
   setImageViewerImage,
   clearImageViewerImage,
 } = slice.actions;

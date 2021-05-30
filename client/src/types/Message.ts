@@ -1,4 +1,4 @@
-export type MessageType = "text" | "image";
+export type MessageType = "text" | "image" | "removed";
 
 export interface Message {
   id: string;

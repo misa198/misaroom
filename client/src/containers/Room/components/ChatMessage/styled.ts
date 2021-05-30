@@ -57,11 +57,12 @@ export const ChatMessageContentWrapper = styled.div<{
   height: fit-content;
 `;
 
-export const ChatMessageContent = styled.p`
+export const ChatMessageContent = styled.p<{ removed: boolean }>`
   font-weight: 300;
   font-size: 0.9rem;
   max-width: 180px;
   word-break: break-word;
+  ${(props) => (props.removed ? "font-style: italic;" : "")}
 `;
 
 export const ChatMessageContentImage = styled.img`

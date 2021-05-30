@@ -1,4 +1,5 @@
 import { FC, useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { Trash } from "react-feather";
 import Tooltip from "react-tooltip";
 
@@ -17,16 +18,23 @@ import { Message } from "../../../../types/Message";
 
 import { socket } from "../../../../shared/socket/SocketProvider";
 
+import { deleteMessage } from "../../../../store/slice/room.slice";
+
 interface PropTypes {
   message: Message;
 }
 
 const ChatMessage: FC<PropTypes> = ({ message }: PropTypes) => {
+  const dispatch = useDispatch();
   const [isSender, setIsSender] = useState(false);
 
   useEffect(() => {
     setIsSender(message.senderId === socket.id);
   }, [message.senderId]);
+
+  function removeMessage(): void {
+    dispatch(deleteMessage(message.id));
+  }
 
   return (
     <ChatMessageWrapper isSender={isSender}>
@@ -42,13 +50,15 @@ const ChatMessage: FC<PropTypes> = ({ message }: PropTypes) => {
         <ChatMessageSender isSender={isSender}>
           {message.sender}
         </ChatMessageSender>
-        <ChatMessageContent>{message.content}</ChatMessageContent>
+        <ChatMessageContent removed={message.type === "removed"}>
+          {message.content}
+        </ChatMessageContent>
       </ChatMessageContentWrapper>
       <Tooltip effect="solid" place="top" />
       <ChatMessageButtonsWrapper isSender={isSender}>
-        {isSender && (
+        {isSender && message.type !== "removed" && (
           <>
-            <ChatMessageButton data-tip="Delete">
+            <ChatMessageButton data-tip="Delete" onClick={removeMessage}>
               <Trash size={16} />
             </ChatMessageButton>
             <Tooltip effect="solid" place="top" />
