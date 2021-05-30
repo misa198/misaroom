@@ -7,4 +7,5 @@ export const ChatWrapper = styled.div<{ showChat: boolean }>`
   display: flex;
   flex-direction: column;
   transition: all 300ms ease-in-out;
+  border-left: 1px solid rgba(255, 255, 255, 0.05);
 `;

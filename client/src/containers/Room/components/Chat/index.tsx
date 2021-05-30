@@ -5,6 +5,7 @@ import { RootState } from "../../../../store";
 
 import { ChatWrapper } from "./styled";
 
+import ChatHeader from "../ChatHeader";
 import ChatConversation from "../ChatConversation";
 import ChatInput from "../ChatInput";
 
@@ -15,6 +16,7 @@ const Chat: FC = () => {
 
   return (
     <ChatWrapper showChat={showChat}>
+      <ChatHeader />
       <ChatConversation />
       <ChatInput />
     </ChatWrapper>
