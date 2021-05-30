@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { User } from "../../types/User";
+import { Message } from "../../types/Message";
 
 interface State {
   id: string;
@@ -10,6 +11,7 @@ interface State {
   };
   users: User[];
   imageViewer: string;
+  message: Message[];
 }
 
 const initialState: State = {
@@ -21,12 +23,16 @@ const initialState: State = {
   },
   users: [],
   imageViewer: "",
+  message: [],
 };
 
 const slice = createSlice({
   name: "room",
   initialState,
   reducers: {
+    clearState() {
+      return initialState;
+    },
     changeChatStatus(state) {
       return {
         ...state,
@@ -106,6 +112,7 @@ const slice = createSlice({
 });
 
 export const {
+  clearState,
   changeChatStatus,
   setUsers,
   addNewUser,
