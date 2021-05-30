@@ -64,6 +64,7 @@ const PasswordForm: FC<PropTypes> = ({ name, roomId }: PropTypes) => {
               placeholder="password"
               onChange={formik.handleChange}
               value={formik.values.password}
+              autoComplete="off"
             />
             {formik.errors["password"] && formik.touched["password"] ? (
               <BasicFormFieldError>

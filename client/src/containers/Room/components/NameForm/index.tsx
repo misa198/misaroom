@@ -43,6 +43,7 @@ const NameForm: FC<PropTypes> = ({ setName }: PropTypes) => {
               placeholder="name"
               onChange={formik.handleChange}
               value={formik.values.name}
+              autoComplete="off"
             />
             {formik.errors["name"] && formik.touched["name"] ? (
               <BasicFormFieldError>{formik.errors["name"]}</BasicFormFieldError>
