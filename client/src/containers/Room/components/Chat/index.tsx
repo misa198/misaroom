@@ -10,7 +10,10 @@ import ChatConversation from "../ChatConversation";
 import ChatInput from "../ChatInput";
 import ChatImageViewer from "../ChatImageViewer";
 
-import { insertMessage } from "../../../../store/slice/room.slice";
+import {
+  insertMessage,
+  increaseNotification,
+} from "../../../../store/slice/room.slice";
 import { socket } from "../../../../shared/socket/SocketProvider";
 
 const Chat: FC = () => {
@@ -22,7 +25,10 @@ const Chat: FC = () => {
   useEffect((): any => {
     socket.on("new-message", (message) => {
       dispatch(insertMessage(message));
+      dispatch(increaseNotification());
     });
+
+    return () => socket.off("new-message");
   }, [dispatch]);
 
   return (

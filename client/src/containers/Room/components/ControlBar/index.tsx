@@ -1,4 +1,4 @@
-import { FC, useEffect } from "react";
+import { FC, useEffect, memo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Tooltip from "react-tooltip";
 import {
@@ -15,6 +15,7 @@ import {
   ControlBarWrapper,
   ControlBarContainer,
   ControlBarButton,
+  NotificationAmount,
 } from "./styled";
 
 import { RootState } from "../../../../store";
@@ -36,6 +37,9 @@ const ControlBar: FC<PropTypes> = ({ showControlBar }: PropTypes) => {
   const dispatch = useDispatch();
   const status = useSelector((state: RootState) => state.room.status);
   const roomId = useSelector((state: RootState) => state.room.id);
+  const notification = useSelector(
+    (state: RootState) => state.room.notification
+  );
 
   useEffect((): any => {
     socket.on("switch-device", (res) => {
@@ -99,6 +103,9 @@ const ControlBar: FC<PropTypes> = ({ showControlBar }: PropTypes) => {
           data-tip="Chat"
           onClick={changeChatStatus}
         >
+          {notification > 0 && (
+            <NotificationAmount>{notification}</NotificationAmount>
+          )}
           <MessageSquare />
         </ControlBarButton>
         <Tooltip place="top" type="dark" effect="solid" />
@@ -111,4 +118,4 @@ const ControlBar: FC<PropTypes> = ({ showControlBar }: PropTypes) => {
   );
 };
 
-export default ControlBar;
+export default memo(ControlBar);

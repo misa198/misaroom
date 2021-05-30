@@ -12,6 +12,7 @@ interface State {
   users: User[];
   imageViewer: string;
   messages: Message[];
+  notification: number;
 }
 
 const initialState: State = {
@@ -24,6 +25,7 @@ const initialState: State = {
   users: [],
   imageViewer: "",
   messages: [],
+  notification: 0,
 };
 
 const slice = createSlice({
@@ -36,6 +38,7 @@ const slice = createSlice({
     changeChatStatus(state) {
       return {
         ...state,
+        notification: 0,
         status: {
           ...state.status,
           showChat: !state.status.showChat,
@@ -96,6 +99,14 @@ const slice = createSlice({
       state.users[index][action.payload.type] = action.payload.enabled;
       return state;
     },
+    increaseNotification(state: State) {
+      if (!state.status.showChat)
+        return {
+          ...state,
+          notification: state.notification + 1,
+        };
+      return state;
+    },
     insertMessage(state: State, action: PayloadAction<Message>) {
       return {
         ...state,
@@ -126,6 +137,7 @@ export const {
   switchCam,
   switchMic,
   userSwitchDevice,
+  increaseNotification,
   insertMessage,
   setImageViewerImage,
   clearImageViewerImage,

@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef } from "react";
+import { FC, useEffect, useRef, memo } from "react";
 import { useSelector } from "react-redux";
 
 import { ChatConversationWrapper } from "./styled";
@@ -31,4 +31,4 @@ const ChatConversation: FC = () => {
   );
 };
 
-export default ChatConversation;
+export default memo(ChatConversation);
