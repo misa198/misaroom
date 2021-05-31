@@ -17,7 +17,7 @@ import { CallerDto } from './dtos/caller.dto';
 import { RemoveMessageDto } from './dtos/remove-message.dto';
 
 import { RedisCacheService } from './redis-cache/redis-cache.service';
-import { RoomDetails, User } from './types/roomDetails';
+import { RoomDetails } from './types/roomDetails';
 
 import { avatars } from './constants/avatar';
 
@@ -154,19 +154,6 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       type: 'text',
     };
     client.to(payload.roomId).emit('new-message', message);
-  }
-
-  async responseImageMessage(roomId: string, user: User, uri: string) {
-    const message = {
-      senderId: user.id,
-      sender: user.name,
-      avatar: user.avatar,
-      id: nanoid(64),
-      content: uri,
-      time: new Date(),
-      type: 'image',
-    };
-    this.wss.in(roomId).emit('new-message', message);
   }
 
   @SubscribeMessage('remove-message')
