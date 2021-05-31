@@ -55,6 +55,16 @@ export const ChatMessageContentWrapper = styled.div<{
   border-radius: 0.35rem;
   background: ${(props) => (props.isImageContent ? "transparent" : "")};
   height: fit-content;
+  animation: messageContentAppear 200ms;
+
+  @keyframes messageContentAppear {
+    0% {
+      transform: scaleX(0);
+    }
+    100% {
+      transform: scaleX(1);
+    }
+  }
 `;
 
 export const ChatMessageContent = styled.p<{ removed: boolean }>`
@@ -72,6 +82,7 @@ export const ChatMessageContentImage = styled.img`
   height: auto;
   border-radius: 0.35rem;
   cursor: pointer;
+  animation: messageContentAppear 200ms;
 `;
 
 export const ChatMessageButtonsWrapper = styled.div<{ isSender: boolean }>`
