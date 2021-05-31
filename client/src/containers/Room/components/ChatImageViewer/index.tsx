@@ -1,4 +1,4 @@
-import { FC, KeyboardEvent, memo, useEffect, useState } from "react";
+import { FC, memo, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { X } from "react-feather";
 
