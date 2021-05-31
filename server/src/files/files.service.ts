@@ -26,7 +26,6 @@ export class FilesService {
   }
 
   deleteFolder(roomId: string) {
-    console.log(roomId);
     cloudinary.v2.api.delete_folder(`misa-room/${roomId}`);
   }
 }
