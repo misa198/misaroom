@@ -28,12 +28,14 @@ import { RemoveMessageValidationPipe } from './pipes/remove-message.pipe';
 import { SendMessageValidationPipe } from './pipes/send-message.pipe';
 import { SwitchDeviceValidationPipe } from './pipes/switch-device.pipe';
 import { AppService } from './app.service';
+import { FilesService } from './files/files.service';
 
 @WebSocketGateway({})
 export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     private readonly redisCacheService: RedisCacheService,
     private readonly appService: AppService,
+    private readonly fileServices: FilesService,
   ) {}
   @WebSocketServer()
   private wss: Server;
@@ -117,25 +119,6 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     client.to(payload.roomId).emit(`new-user-ready-call-video_${client.id}`);
   }
 
-  async handleDisconnect(client: Socket) {
-    const roomIds = JSON.parse(
-      await this.redisCacheService.get(client.id),
-    ) as string[];
-    for (const roomId of roomIds) {
-      const room = JSON.parse(
-        await this.redisCacheService.get(roomId),
-      ) as RoomDetails;
-      room.users.splice(
-        room.users.findIndex((user) => user.id === client.id),
-        1,
-      );
-      if (room.users.length === 0) this.redisCacheService.del(roomId);
-      else this.redisCacheService.set(roomId, JSON.stringify(room));
-      client.to(roomId).emit('leave-room', { userId: client.id });
-    }
-    this.redisCacheService.del(client.id);
-  }
-
   @SubscribeMessage('switch-device')
   @UsePipes(new SwitchDeviceValidationPipe())
   async handleSwitchDevice(client: Socket, payload: SwitchDeviceDto) {
@@ -199,6 +182,28 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   handleConnection(client: Socket) {
     client.emit('connected');
     this.redisCacheService.set(client.id, JSON.stringify([]));
+  }
+
+  async handleDisconnect(client: Socket) {
+    const roomIds = JSON.parse(
+      await this.redisCacheService.get(client.id),
+    ) as string[];
+    for (const roomId of roomIds) {
+      const room = JSON.parse(
+        await this.redisCacheService.get(roomId),
+      ) as RoomDetails;
+      room.users.splice(
+        room.users.findIndex((user) => user.id === client.id),
+        1,
+      );
+      if (room.users.length === 0) this.redisCacheService.del(roomId);
+      else this.redisCacheService.set(roomId, JSON.stringify(room));
+      client.to(roomId).emit('leave-room', { userId: client.id });
+      try {
+        this.fileServices.deleteFolder(roomId);
+      } catch (e) {}
+    }
+    this.redisCacheService.del(client.id);
   }
 
   private async generateRoomId() {

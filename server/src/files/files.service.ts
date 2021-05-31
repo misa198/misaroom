@@ -24,4 +24,8 @@ export class FilesService {
         .end(buffer);
     });
   }
+
+  deleteFolder(roomId: string) {
+    cloudinary.v2.api.delete_folder(`misa-room/${roomId}`);
+  }
 }
