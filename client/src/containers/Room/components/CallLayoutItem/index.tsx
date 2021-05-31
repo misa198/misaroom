@@ -47,7 +47,7 @@ const CallLayoutItem: FC<PropTypes> = ({
 
   useEffect(() => {
     if (listen) {
-      callerAudioPeer.on("stream", (stream, a) => {
+      callerAudioPeer.on("stream", (stream) => {
         setAudioStream(stream);
         setListen(false);
       });
