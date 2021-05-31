@@ -1,4 +1,4 @@
-import { FC, useRef } from "react";
+import { FC, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import useResize from "use-resize-observer";
 import Tooltip from "react-tooltip";
@@ -22,13 +22,29 @@ import { User } from "../../../../types/User";
 
 interface PropTypes {
   user: User;
+  videoStream: MediaStream | undefined;
 }
 
-const CallLayoutItemCaller: FC<PropTypes> = ({ user }: PropTypes) => {
+const CallLayoutItemCaller: FC<PropTypes> = ({
+  user,
+  videoStream,
+}: PropTypes) => {
   const { ref, width = 0, height = 0 } = useResize();
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const status = useSelector((state: RootState) => state.room.status);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      if (videoStream) {
+        videoRef.current.srcObject = videoStream;
+        videoRef.current.play();
+      } else {
+        videoRef.current.srcObject = null;
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [videoStream]);
 
   return (
     <CallLayoutItemWrapper ref={ref}>
@@ -41,7 +57,7 @@ const CallLayoutItemCaller: FC<PropTypes> = ({ user }: PropTypes) => {
       </CallLayoutItemDetails>
 
       <CallLayoutItemVideoWrapper video={status.camera}>
-        <CallLayoutItemVideo controls ref={videoRef} muted />
+        <CallLayoutItemVideo controls ref={videoRef} muted autoPlay />
       </CallLayoutItemVideoWrapper>
 
       <CallLayoutItemNameWrapper data-tip={user.name}>

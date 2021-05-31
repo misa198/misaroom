@@ -26,11 +26,13 @@ import { socket } from "../../../../shared/socket/SocketProvider";
 interface PropTypes {
   user: User;
   callerAudioStream: MediaStream;
+  callerVideoStream: MediaStream | undefined;
 }
 
 const CallLayoutItem: FC<PropTypes> = ({
   user,
   callerAudioStream,
+  callerVideoStream,
 }: PropTypes) => {
   const roomId = useSelector((state: RootState) => state.room.id);
 
@@ -38,17 +40,25 @@ const CallLayoutItem: FC<PropTypes> = ({
   const videoRef = useRef<HTMLVideoElement>(null);
   const videoForAudioRef = useRef<HTMLVideoElement>(null);
   const [audioStream, setAudioStream] = useState<MediaStream>();
-  const [peer, setPeer] = useState<Instance>();
+  const [videoStream, setVideoStream] = useState<MediaStream>();
+  const [audioPeer, setAudioPeer] = useState<Instance>();
+  const [receivedVideoPeer, setReceivedVideoPeer] = useState<Instance>();
 
   useEffect(() => {
-    const initialPeer = new Peer({
+    const initialAudioPeer = new Peer({
       initiator: true,
       trickle: false,
       stream: callerAudioStream,
     });
+    setAudioPeer(initialAudioPeer);
 
-    setPeer(initialPeer);
-    initialPeer.on("signal", (signal: SignalData) => {
+    const initialReceivedVideoPeer = new Peer({
+      initiator: false,
+      trickle: false,
+    });
+    setReceivedVideoPeer(initialReceivedVideoPeer);
+
+    initialAudioPeer.on("signal", (signal: SignalData) => {
       socket.emit("ready-call-audio", {
         roomId,
         signal,
@@ -57,19 +67,53 @@ const CallLayoutItem: FC<PropTypes> = ({
     });
   }, [callerAudioStream, roomId, user.id]);
 
+  // =========================== Audio call ===========================
   useEffect((): any => {
-    if (peer) {
+    if (audioPeer) {
       socket.on(`new-user-ready-call-audio_${user.id}`, ({ signal }) => {
-        peer.signal(signal);
+        audioPeer.signal(signal);
 
-        peer.on("stream", (stream) => {
+        audioPeer.on("stream", (stream) => {
           setAudioStream(stream);
         });
       });
       return () => socket.off(`new-user-ready-call-audio_${user.id}`);
     }
     return null;
-  }, [peer, user.id]);
+  }, [audioPeer, user.id]);
+
+  // =========================== Video call ===========================
+  useEffect(() => {
+    if (callerVideoStream) {
+      const initialPeer = new Peer({
+        initiator: true,
+        trickle: false,
+        stream: callerVideoStream,
+      });
+
+      initialPeer.on("signal", (signal: SignalData) => {
+        socket.emit("ready-call-video", {
+          roomId,
+          signal,
+          userId: user.id,
+        });
+      });
+    }
+  }, [callerVideoStream, roomId, user.id]);
+
+  useEffect((): any => {
+    if (user.camera && receivedVideoPeer) {
+      socket.on(`new-user-ready-call-video_${user.id}`, ({ signal }) => {
+        receivedVideoPeer.signal(signal);
+
+        receivedVideoPeer.on("stream", (stream) => {
+          setVideoStream(stream);
+        });
+      });
+      return () => socket.off(`new-user-ready-call-video_${user.id}`);
+    }
+    return null;
+  }, [receivedVideoPeer, user.id, user.camera]);
 
   useEffect(() => {
     if (
@@ -78,9 +122,19 @@ const CallLayoutItem: FC<PropTypes> = ({
       !videoForAudioRef.current.srcObject
     ) {
       videoForAudioRef.current.srcObject = audioStream;
-      videoForAudioRef.current.play();
     }
   }, [audioStream]);
+
+  useEffect(() => {
+    if (videoStream) {
+      if (videoRef.current && !videoRef.current.srcObject) {
+        videoRef.current.srcObject = videoStream;
+      }
+    } else if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [videoStream]);
 
   return (
     <CallLayoutItemWrapper ref={ref}>
@@ -97,6 +151,7 @@ const CallLayoutItem: FC<PropTypes> = ({
         <CallLayoutItemVideoForAudioTrack
           ref={videoForAudioRef}
           controls={false}
+          autoPlay
         />
       </CallLayoutItemVideoWrapper>
 

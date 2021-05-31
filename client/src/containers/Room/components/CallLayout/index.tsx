@@ -19,6 +19,7 @@ const CallLayout: FC = () => {
   const [layout, setLayout] = useState<Layout>({ columns: 0, rows: 0 });
   const [showControlBar, setShowControlBar] = useState<boolean>(false);
   const [audioStream, setAudioStream] = useState<MediaStream>();
+  const [videoStream, setVideoStream] = useState<MediaStream>();
 
   useEffect(() => {
     setLayout(calLayout(users.length));
@@ -55,15 +56,34 @@ const CallLayout: FC = () => {
     }
   }, [audioStream, status.audio]);
 
+  useEffect(() => {
+    if (status.camera) {
+      navigator.mediaDevices
+        .getUserMedia({ video: true, audio: false })
+        .then((stream) => {
+          setVideoStream(stream);
+        });
+    } else if (videoStream) {
+      videoStream.getTracks().forEach((tracks) => tracks.stop());
+      setVideoStream(undefined);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status.camera]);
+
   if (audioStream)
     return (
       <CallLayoutWrapper layout={layout} onMouseMove={changeControlBar}>
         {users.map((user, index) =>
           user.id === socket.id ? (
-            <CallLayoutItemCaller user={user} key={`user_${index.toFixed()}`} />
+            <CallLayoutItemCaller
+              videoStream={videoStream}
+              user={user}
+              key={`user_${index.toFixed()}`}
+            />
           ) : (
             <CallLayoutItem
               callerAudioStream={audioStream}
+              callerVideoStream={videoStream}
               user={user}
               key={`user_${index.toFixed()}`}
             />
