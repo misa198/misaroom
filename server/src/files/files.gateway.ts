@@ -9,12 +9,17 @@ export class FilesGateway {
   @WebSocketServer()
   private wss: Server;
 
-  async responseImageMessage(roomId: string, user: User, uri: string) {
+  async responseImageMessage(
+    roomId: string,
+    user: User,
+    uri: string,
+    id: string,
+  ) {
     const message = {
       senderId: user.id,
       sender: user.name,
       avatar: user.avatar,
-      id: nanoid(64),
+      id,
       content: uri,
       time: new Date(),
       type: 'image',

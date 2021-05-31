@@ -38,16 +38,17 @@ export class FilesController {
   async uploadFile(@UploadedFile() file: Express.Multer.File) {
     const { originalname } = file;
     const paths = originalname.split('.');
-    if (paths.length !== 3) throw new BadRequestException('Invalid file');
-    if (paths[0].length !== 32) throw new BadRequestException('Invalid file');
-    if (paths[1].length !== 20) throw new BadRequestException('Invalid file');
+    if (paths.length !== 4) throw new BadRequestException('Invalid file!');
+    if (paths[0].length !== 32) throw new BadRequestException('Invalid file!');
+    if (paths[1].length !== 20) throw new BadRequestException('Invalid file!');
+    if (paths[2].length !== 64) throw new BadRequestException('Invalid file!');
     const { user } = await this.appService.authenticate(paths[1], paths[0]);
     try {
       const url = (await this.filesService.uploadImage(
         file.buffer,
         paths[0],
       )) as string;
-      this.filesGateway.responseImageMessage(paths[1], user, url);
+      this.filesGateway.responseImageMessage(paths[1], user, url, paths[2]);
     } catch (e) {
       throw new InternalServerErrorException();
     }
