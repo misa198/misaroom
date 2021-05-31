@@ -15,11 +15,13 @@ import { socket } from "../../../../shared/socket/SocketProvider";
 
 const CallLayout: FC = () => {
   const users = useSelector((state: RootState) => state.room.users);
+  const roomId = useSelector((state: RootState) => state.room.id);
+  const status = useSelector((state: RootState) => state.room.status);
 
   const [layout, setLayout] = useState<Layout>({ columns: 0, rows: 0 });
   const [showControlBar, setShowControlBar] = useState<boolean>(false);
   const [audioPeer, setAudioPeer] = useState<Instance>();
-  const roomId = useSelector((state: RootState) => state.room.id);
+  const [audioStream, setAudioStream] = useState<MediaStream>();
 
   useEffect(() => {
     setLayout(calLayout(users.length));
@@ -55,7 +57,7 @@ const CallLayout: FC = () => {
           },
           stream,
         });
-
+        setAudioStream(stream);
         setAudioPeer(initialAudioPeer);
 
         initialAudioPeer.on("signal", (signal) => {
@@ -63,6 +65,14 @@ const CallLayout: FC = () => {
         });
       });
   }, [roomId]);
+
+  useEffect(() => {
+    if (audioStream)
+      audioStream.getAudioTracks().forEach((track) => {
+        track.enabled = status.audio;
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status.audio]);
 
   if (audioPeer)
     return (

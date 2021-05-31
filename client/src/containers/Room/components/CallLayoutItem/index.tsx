@@ -32,8 +32,8 @@ const CallLayoutItem: FC<PropTypes> = ({
   callerAudioPeer,
 }: PropTypes) => {
   const { ref, width = 0, height = 0 } = useResize();
-  const videoForAudioRef = useRef<HTMLVideoElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const videoForAudioRef = useRef<HTMLVideoElement>(null);
   const [audioStream, setAudioStream] = useState<MediaStream>();
   const [listen, setListen] = useState<boolean>(true);
 
@@ -55,9 +55,13 @@ const CallLayoutItem: FC<PropTypes> = ({
   }, [callerAudioPeer, listen]);
 
   useEffect(() => {
-    if (audioStream && videoRef.current && !videoRef.current.srcObject) {
-      videoRef.current.srcObject = audioStream;
-      videoRef.current.play();
+    if (
+      audioStream &&
+      videoForAudioRef.current &&
+      !videoForAudioRef.current.srcObject
+    ) {
+      videoForAudioRef.current.srcObject = audioStream;
+      videoForAudioRef.current.play();
     }
   }, [audioStream]);
 
@@ -73,7 +77,10 @@ const CallLayoutItem: FC<PropTypes> = ({
 
       <CallLayoutItemVideoWrapper video={user.camera}>
         <CallLayoutItemVideo controls ref={videoRef} autoPlay />
-        <CallLayoutItemVideoForAudioTrack ref={videoForAudioRef} />
+        <CallLayoutItemVideoForAudioTrack
+          ref={videoForAudioRef}
+          controls={false}
+        />
       </CallLayoutItemVideoWrapper>
 
       <CallLayoutItemNameWrapper data-tip={user.name}>
