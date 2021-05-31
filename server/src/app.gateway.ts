@@ -123,8 +123,18 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('ready-call-video')
   @UsePipes(new CallerValidationPipe())
   async handleVideoCaller(client: Socket, payload: CallerDto) {
-    await this.appService.authenticateWs(client.id, payload.roomId);
-    client.to(payload.roomId).emit(`new-user-ready-call-video_${client.id}`);
+    const { room } = await this.appService.authenticateWs(
+      client.id,
+      payload.roomId,
+    );
+    if (room.users.length > 1) {
+      this.wss
+        .to(payload.userId)
+        .emit(`new-user-ready-call-video_${client.id}`, {
+          userId: client.id,
+          signal: payload.signal,
+        });
+    }
   }
 
   @SubscribeMessage('switch-device')
