@@ -1,7 +1,6 @@
-import { useState, FC, useEffect } from "react";
+import { useState, FC, useEffect, memo } from "react";
 import { useSelector } from "react-redux";
 
-import Peer, { Instance } from "simple-peer";
 import { CallLayoutWrapper } from "./styled";
 
 import CallLayoutItem from "../CallLayoutItem";
@@ -15,12 +14,10 @@ import { socket } from "../../../../shared/socket/SocketProvider";
 
 const CallLayout: FC = () => {
   const users = useSelector((state: RootState) => state.room.users);
-  const roomId = useSelector((state: RootState) => state.room.id);
   const status = useSelector((state: RootState) => state.room.status);
 
   const [layout, setLayout] = useState<Layout>({ columns: 0, rows: 0 });
   const [showControlBar, setShowControlBar] = useState<boolean>(false);
-  const [audioPeer, setAudioPeer] = useState<Instance>();
   const [audioStream, setAudioStream] = useState<MediaStream>();
 
   useEffect(() => {
@@ -44,37 +41,21 @@ const CallLayout: FC = () => {
 
   useEffect(() => {
     navigator.mediaDevices
-      .getUserMedia({ audio: true, video: false })
+      .getUserMedia({ video: false, audio: true })
       .then((stream) => {
-        stream.getAudioTracks().forEach((track) => {
-          track.enabled = false;
-        });
-        const initialAudioPeer = new Peer({
-          initiator: true,
-          trickle: false,
-          config: {
-            iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
-          },
-          stream,
-        });
         setAudioStream(stream);
-        setAudioPeer(initialAudioPeer);
-
-        initialAudioPeer.on("signal", (signal) => {
-          socket.emit("ready-call-audio", { roomId, signal });
-        });
       });
-  }, [roomId]);
+  }, []);
 
   useEffect(() => {
-    if (audioStream)
+    if (audioStream) {
       audioStream.getAudioTracks().forEach((track) => {
         track.enabled = status.audio;
       });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status.audio]);
+    }
+  }, [audioStream, status.audio]);
 
-  if (audioPeer)
+  if (audioStream)
     return (
       <CallLayoutWrapper layout={layout} onMouseMove={changeControlBar}>
         {users.map((user, index) =>
@@ -82,7 +63,7 @@ const CallLayout: FC = () => {
             <CallLayoutItemCaller user={user} key={`user_${index.toFixed()}`} />
           ) : (
             <CallLayoutItem
-              callerAudioPeer={audioPeer}
+              callerAudioStream={audioStream}
               user={user}
               key={`user_${index.toFixed()}`}
             />
@@ -94,4 +75,4 @@ const CallLayout: FC = () => {
   return <></>;
 };
 
-export default CallLayout;
+export default memo(CallLayout);

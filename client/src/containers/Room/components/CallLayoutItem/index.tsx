@@ -1,8 +1,9 @@
 import { FC, useEffect, useRef, useState } from "react";
-import { Instance } from "simple-peer";
+import { useSelector } from "react-redux";
 import useResize from "use-resize-observer";
 import Tooltip from "react-tooltip";
 import { Mic, MicOff } from "react-feather";
+import Peer, { Instance, SignalData } from "simple-peer";
 
 import {
   CallLayoutItemWrapper,
@@ -18,41 +19,57 @@ import {
   CallLayoutItemVideoForAudioTrack,
 } from "./styled";
 
-import { socket } from "../../../../shared/socket/SocketProvider";
-
 import { User } from "../../../../types/User";
+import { RootState } from "../../../../store";
+import { socket } from "../../../../shared/socket/SocketProvider";
 
 interface PropTypes {
   user: User;
-  callerAudioPeer: Instance;
+  callerAudioStream: MediaStream;
 }
 
 const CallLayoutItem: FC<PropTypes> = ({
   user,
-  callerAudioPeer,
+  callerAudioStream,
 }: PropTypes) => {
+  const roomId = useSelector((state: RootState) => state.room.id);
+
   const { ref, width = 0, height = 0 } = useResize();
   const videoRef = useRef<HTMLVideoElement>(null);
   const videoForAudioRef = useRef<HTMLVideoElement>(null);
   const [audioStream, setAudioStream] = useState<MediaStream>();
-  const [listen, setListen] = useState<boolean>(true);
-
-  useEffect((): any => {
-    socket.on(`new-user-ready-call-audio_${user.id}`, ({ signal }) => {
-      callerAudioPeer.signal(signal);
-    });
-
-    return () => socket.off(`new-user-ready-call-audio_${user.id}`);
-  }, [callerAudioPeer, user.id]);
+  const [peer, setPeer] = useState<Instance>();
 
   useEffect(() => {
-    if (listen) {
-      callerAudioPeer.on("stream", (stream) => {
-        setAudioStream(stream);
-        setListen(false);
+    const initialPeer = new Peer({
+      initiator: true,
+      trickle: false,
+      stream: callerAudioStream,
+    });
+
+    setPeer(initialPeer);
+    initialPeer.on("signal", (signal: SignalData) => {
+      socket.emit("ready-call-audio", {
+        roomId,
+        signal,
+        userId: user.id,
       });
+    });
+  }, [callerAudioStream, roomId, user.id]);
+
+  useEffect((): any => {
+    if (peer) {
+      socket.on(`new-user-ready-call-audio_${user.id}`, ({ signal }) => {
+        peer.signal(signal);
+
+        peer.on("stream", (stream) => {
+          setAudioStream(stream);
+        });
+      });
+      return () => socket.off(`new-user-ready-call-audio_${user.id}`);
     }
-  }, [callerAudioPeer, listen]);
+    return null;
+  }, [peer, user.id]);
 
   useEffect(() => {
     if (
