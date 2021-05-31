@@ -183,12 +183,15 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
         room.users.findIndex((user) => user.id === client.id),
         1,
       );
-      if (room.users.length === 0) this.redisCacheService.del(roomId);
-      else this.redisCacheService.set(roomId, JSON.stringify(room));
-      client.to(roomId).emit('leave-room', { userId: client.id });
-      try {
-        this.fileServices.deleteFolder(roomId);
-      } catch (e) {}
+      if (room.users.length === 0) {
+        this.redisCacheService.del(roomId);
+        try {
+          this.fileServices.deleteFolder(roomId);
+        } catch (e) {}
+      } else {
+        this.redisCacheService.set(roomId, JSON.stringify(room));
+        client.to(roomId).emit('leave-room', { userId: client.id });
+      }
     }
     this.redisCacheService.del(client.id);
   }
