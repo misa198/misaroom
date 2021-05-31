@@ -24,7 +24,7 @@ const ChatConversation: FC = () => {
         return message.type === "text" || message.type === "removed" ? (
           <ChatMessage message={message} key={message.id} />
         ) : (
-          <ChatMessageImage key={message.id} />
+          <ChatMessageImage message={message} key={message.id} />
         );
       })}
     </ChatConversationWrapper>

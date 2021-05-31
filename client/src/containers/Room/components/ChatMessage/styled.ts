@@ -101,3 +101,16 @@ export const ChatMessageWrapper = styled.div<{ isSender: boolean }>`
     visibility: unset !important;
   }
 `;
+
+export const ChatMessageImagePending = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 0.35rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;

@@ -21,12 +21,16 @@ import {
   ChatInputPreviewMessageButton,
 } from "./styled";
 
-import { insertMessage } from "../../../../store/slice/room.slice";
+import {
+  clearImageViewerImage,
+  insertMessage,
+} from "../../../../store/slice/room.slice";
 
 import { socket } from "../../../../shared/socket/SocketProvider";
 
 import { RootState } from "../../../../store";
 import { User } from "../../../../types/User";
+import { apiUrl } from "../../../../constants/url";
 
 const schema = yup.object().shape({
   content: yup.string().required(),
@@ -71,25 +75,41 @@ const ChatInput: FC = () => {
     }
   }
 
-  function sendImageMessage(): void {
-    if (image) {
-      const formData = new FormData();
-      const fileBlob = URL.createObjectURL(image);
-      const ext = image.name.split(".")[image.name.split(".").length - 1];
-      const fileName = `${roomId}.${user?.id}.${ext}`;
-      formData.append("image", fileBlob, fileName);
-    }
-  }
-
-  function onSelectImage(): void {
-    if (inputFileRef.current) inputFileRef.current.click();
-  }
-
   function cancelImage(): void {
     setImage(undefined);
     setTimeout(() => {
       setImagePreview("");
     }, 200);
+  }
+
+  function sendImageMessage(): void {
+    if (image && user && imagePreview) {
+      const formData = new FormData();
+      const ext = image.name.split(".")[image.name.split(".").length - 1];
+      const id = nanoid(64);
+      const fileName = `${roomId}.${user?.id}.${id}.${ext}`;
+      formData.append("image", image, fileName);
+      dispatch(
+        insertMessage({
+          id,
+          sender: user.name,
+          senderId: user.id,
+          avatar: user.avatar,
+          type: "image",
+          pending: true,
+          time: new Date().toString(),
+          content: imagePreview,
+        })
+      );
+      cancelImage();
+      // axios.post(`${apiUrl}/api/files/images`, formData).catch(() => {
+      //   toast("Fail to send image!", { type: "error" });
+      // });
+    }
+  }
+
+  function onSelectImage(): void {
+    if (inputFileRef.current) inputFileRef.current.click();
   }
 
   function switchImageButton(): void {

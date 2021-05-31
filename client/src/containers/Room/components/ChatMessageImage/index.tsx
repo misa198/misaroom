@@ -1,6 +1,7 @@
-import { FC, useState, memo } from "react";
+import { FC, useState, memo, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import Tooltip from "react-tooltip";
+import Loader from "react-loader-spinner";
 
 import {
   ChatMessageWrapper,
@@ -9,35 +10,57 @@ import {
   ChatMessageSender,
   ChatMessageContentWrapper,
   ChatMessageContentImage,
+  ChatMessageImagePending,
 } from "../ChatMessage/styled";
 
 import { setImageViewerImage } from "../../../../store/slice/room.slice";
 
-const ChatMessageImage: FC = () => {
+import { Message } from "../../../../types/Message";
+
+import { socket } from "../../../../shared/socket/SocketProvider";
+
+interface PropTypes {
+  message: Message;
+}
+
+const ChatMessageImage: FC<PropTypes> = ({ message }: PropTypes) => {
   const dispatch = useDispatch();
   const [isSender, setIsSender] = useState(false);
 
+  useEffect(() => {
+    setIsSender(message.senderId === socket.id);
+  }, [message.senderId]);
+
   function displayImage(): void {
-    dispatch(
-      setImageViewerImage("https://wallpaperaccess.com/full/138728.jpg")
-    );
+    dispatch(setImageViewerImage(message.content));
   }
 
   return (
     <ChatMessageWrapper isSender={isSender}>
       <ChatMessageAvatarWrapper isSender={isSender}>
-        <ChatMessageAvatar src="https://res.cloudinary.com/dumfvnj9f/image/upload/v1622008721/animals/wombat_uk5z9h.png" />
+        <ChatMessageAvatar src={message.avatar} />
       </ChatMessageAvatarWrapper>
       <ChatMessageContentWrapper
-        data-tip={`${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`}
+        data-tip={`${new Date(message.time).toLocaleDateString()} ${new Date(
+          message.time
+        ).toLocaleTimeString()}`}
         isImageContent
         isSender={isSender}
       >
-        <ChatMessageSender isSender={isSender}>cds</ChatMessageSender>
-        <ChatMessageContentImage
-          src="https://picsum.photos/seed/picsum/700/400"
-          onClick={displayImage}
-        />
+        <ChatMessageSender isSender={isSender}>
+          {message.sender}
+        </ChatMessageSender>
+        <ChatMessageContentImage src={message.content} onClick={displayImage} />
+        {message.pending && (
+          <ChatMessageImagePending>
+            <Loader
+              type="ThreeDots"
+              color="rgba(255, 255, 255, 0.8)"
+              height={30}
+              width={30}
+            />
+          </ChatMessageImagePending>
+        )}
       </ChatMessageContentWrapper>
       <Tooltip effect="solid" place="top" />
     </ChatMessageWrapper>
