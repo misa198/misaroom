@@ -1,5 +1,4 @@
 import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
-import { nanoid } from 'nanoid';
 import { Server } from 'socket.io';
 
 import { User } from 'src/types/roomDetails';

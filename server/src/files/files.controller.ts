@@ -48,7 +48,7 @@ export class FilesController {
         file.buffer,
         paths[0],
       )) as string;
-      this.filesGateway.responseImageMessage(paths[1], user, url, paths[2]);
+      this.filesGateway.responseImageMessage(paths[0], user, url, paths[2]);
     } catch (e) {
       throw new InternalServerErrorException();
     }
