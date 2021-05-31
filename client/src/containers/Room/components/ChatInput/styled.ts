@@ -5,6 +5,7 @@ export const ChatInputWrapper = styled.div`
   align-items: center;
   padding: 10px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
 `;
 
 export const ChatInputImageButton = styled.button<{ hide: boolean }>`
@@ -66,5 +67,71 @@ export const ChatInputButton = styled.button`
   margin-left: 11px;
   outline: none;
   border: none;
+  cursor: pointer;
+`;
+
+export const ChatInputMessageFile = styled.input.attrs({
+  type: "file",
+  accept: "image/png, image/jpg, image/jpeg",
+})`
+  display: none;
+`;
+
+export const ChatInputPreviewImageWrapper = styled.div<{ isShow: boolean }>`
+  position: absolute;
+  height: 100px;
+  top: -101px;
+  left: 0px;
+  padding: 5px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: none;
+  border-left: none;
+  overflow: hidden;
+  transition: transform 200ms;
+  transform: ${(props) =>
+    props.isShow ? "translateX(0);" : "translateX(-100%);"};
+`;
+
+export const ChatInputPreviewImageContainer = styled.div`
+  position: relative;
+  height: 90px;
+  min-width: 90px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const ChatInputPreviewImage = styled.img`
+  max-height: 100%;
+  max-width: 290px;
+  border-radius: 5px;
+`;
+
+export const ChatInputPreviewMessageOverlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 90px;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const ChatInputPreviewMessageButton = styled.button`
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin: 2px;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  background: linear-gradient(-225deg, #3d4e81 0%, #5753c9 48%, #6e7ff3 100%);
   cursor: pointer;
 `;

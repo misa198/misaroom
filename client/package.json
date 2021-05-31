@@ -14,6 +14,7 @@
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "@types/react-redux": "^7.1.16",
+    "axios": "^0.21.1",
     "formik": "^2.2.8",
     "nanoid": "^3.1.23",
     "react": "^17.0.2",
