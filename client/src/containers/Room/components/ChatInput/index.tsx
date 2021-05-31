@@ -4,6 +4,8 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import { nanoid } from "nanoid";
 import { Play, Image, X } from "react-feather";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 import {
   ChatInputWrapper,
@@ -53,19 +55,30 @@ const ChatInput: FC = () => {
     const target = e.target as HTMLInputElement;
     if (target.files) {
       if (target.files[0]) {
-        const reader = new FileReader();
-        reader.readAsDataURL(target.files[0]);
-        reader.onloadend = () => {
-          setImagePreview(reader.result as string);
-        };
-        setImage(target.files[0]);
+        if (target.files[0].size <= 3.5 * 1024 * 1024) {
+          const reader = new FileReader();
+          reader.readAsDataURL(target.files[0]);
+          reader.onloadend = () => {
+            setImagePreview(reader.result as string);
+          };
+          setImage(target.files[0]);
+        } else {
+          toast("Too large, maximum size is 3.5 Mb", {
+            type: "error",
+          });
+        }
       }
     }
   }
 
   function sendImageMessage(): void {
-    const formData = new FormData();
-    // formData.append("image");
+    if (image) {
+      const formData = new FormData();
+      const fileBlob = URL.createObjectURL(image);
+      const ext = image.name.split(".")[image.name.split(".").length - 1];
+      const fileName = `${roomId}.${user?.id}.${ext}`;
+      formData.append("image", fileBlob, fileName);
+    }
   }
 
   function onSelectImage(): void {
@@ -74,6 +87,9 @@ const ChatInput: FC = () => {
 
   function cancelImage(): void {
     setImage(undefined);
+    setTimeout(() => {
+      setImagePreview("");
+    }, 200);
   }
 
   function switchImageButton(): void {
@@ -141,7 +157,7 @@ const ChatInput: FC = () => {
             <ChatInputPreviewMessageButton onClick={cancelImage}>
               <X size={18} />
             </ChatInputPreviewMessageButton>
-            <ChatInputPreviewMessageButton>
+            <ChatInputPreviewMessageButton onClick={sendImageMessage}>
               <Play size={18} />
             </ChatInputPreviewMessageButton>
           </ChatInputPreviewMessageOverlay>
