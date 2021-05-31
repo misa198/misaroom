@@ -106,10 +106,18 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('ready-call-audio')
   @UsePipes(new CallerValidationPipe())
   async handleAudioCaller(client: Socket, payload: CallerDto) {
-    await this.appService.authenticateWs(client.id, payload.roomId);
-    client.to(payload.roomId).emit(`new-user-ready-call-audio_${client.id}`, {
-      signal: payload.signal,
-    });
+    const { room } = await this.appService.authenticateWs(
+      client.id,
+      payload.roomId,
+    );
+    if (room.users.length > 1) {
+      this.wss
+        .to(payload.userId)
+        .emit(`new-user-ready-call-audio_${client.id}`, {
+          userId: client.id,
+          signal: payload.signal,
+        });
+    }
   }
 
   @SubscribeMessage('ready-call-video')

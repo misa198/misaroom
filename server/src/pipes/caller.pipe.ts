@@ -11,6 +11,7 @@ export class CallerValidationPipe implements PipeTransform {
       const schema = joi.object({
         roomId: joi.string().length(32).required(),
         signal: joi.any().required(),
+        userId: joi.string().length(20).required(),
       });
       const { error, value } = schema.validate(values);
       if (!value)
