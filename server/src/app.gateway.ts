@@ -5,7 +5,6 @@ import {
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
-  WsException,
 } from '@nestjs/websockets';
 import { nanoid } from 'nanoid';
 import { Server, Socket } from 'socket.io';
@@ -18,7 +17,7 @@ import { CallerDto } from './dtos/caller.dto';
 import { RemoveMessageDto } from './dtos/remove-message.dto';
 
 import { RedisCacheService } from './redis-cache/redis-cache.service';
-import { RoomDetails } from './types/roomDetails';
+import { RoomDetails, User } from './types/roomDetails';
 
 import { avatars } from './constants/avatar';
 
@@ -28,10 +27,14 @@ import { CallerValidationPipe } from './pipes/caller.pipe';
 import { RemoveMessageValidationPipe } from './pipes/remove-message.pipe';
 import { SendMessageValidationPipe } from './pipes/send-message.pipe';
 import { SwitchDeviceValidationPipe } from './pipes/switch-device.pipe';
+import { AppService } from './app.service';
 
 @WebSocketGateway({})
 export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  constructor(readonly redisCacheService: RedisCacheService) {}
+  constructor(
+    private readonly redisCacheService: RedisCacheService,
+    private readonly appService: AppService,
+  ) {}
   @WebSocketServer()
   private wss: Server;
 
@@ -101,7 +104,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('ready-call-audio')
   @UsePipes(new CallerValidationPipe())
   async handleAudioCaller(client: Socket, payload: CallerDto) {
-    await this.authenticate(client.id, payload.roomId);
+    await this.appService.authenticateWs(client.id, payload.roomId);
     client.to(payload.roomId).emit(`new-user-ready-call-audio_${client.id}`, {
       signal: payload.signal,
     });
@@ -110,7 +113,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('ready-call-video')
   @UsePipes(new CallerValidationPipe())
   async handleVideoCaller(client: Socket, payload: CallerDto) {
-    await this.authenticate(client.id, payload.roomId);
+    await this.appService.authenticateWs(client.id, payload.roomId);
     client.to(payload.roomId).emit(`new-user-ready-call-video_${client.id}`);
   }
 
@@ -136,7 +139,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('switch-device')
   @UsePipes(new SwitchDeviceValidationPipe())
   async handleSwitchDevice(client: Socket, payload: SwitchDeviceDto) {
-    const { room, userIndex } = await this.authenticate(
+    const { room, userIndex } = await this.appService.authenticateWs(
       client.id,
       payload.roomId,
     );
@@ -154,7 +157,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('send-message')
   @UsePipes(new SendMessageValidationPipe())
   async handleSendMessage(client: Socket, payload: SendMessageDto) {
-    const { room, userIndex } = await this.authenticate(
+    const { room, userIndex } = await this.appService.authenticateWs(
       client.id,
       payload.roomId,
     );
@@ -170,10 +173,23 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     client.to(payload.roomId).emit('new-message', message);
   }
 
+  async responseImageMessage(roomId: string, user: User, uri: string) {
+    const message = {
+      senderId: user.id,
+      sender: user.name,
+      avatar: user.avatar,
+      id: nanoid(64),
+      content: uri,
+      time: new Date(),
+      type: 'image',
+    };
+    this.wss.in(roomId).emit('new-message', message);
+  }
+
   @SubscribeMessage('remove-message')
   @UsePipes(new RemoveMessageValidationPipe())
   async handleRemoveMessage(client: Socket, payload: RemoveMessageDto) {
-    await this.authenticate(client.id, payload.roomId);
+    await this.appService.authenticateWs(client.id, payload.roomId);
     client.to(payload.roomId).emit('remove-message', {
       messageId: payload.messageId,
       userId: client.id,
@@ -198,24 +214,5 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   private randomAvatar(): string {
     return avatars[Math.floor(Math.random() * avatars.length)];
-  }
-
-  private async authenticate(
-    userId: string,
-    roomId: string,
-  ): Promise<{
-    room: RoomDetails;
-    userIndex: number;
-  }> {
-    const room: RoomDetails = JSON.parse(
-      await this.redisCacheService.get(roomId),
-    );
-    if (!room) throw new WsException({ message: 'Room Not Found' });
-    const userIndex = room.users.findIndex((user) => user.id === userId);
-    if (userIndex < 0) throw new WsException({ message: 'Not Authorized' });
-    return {
-      room,
-      userIndex,
-    };
   }
 }
