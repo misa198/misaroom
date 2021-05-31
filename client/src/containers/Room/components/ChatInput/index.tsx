@@ -22,7 +22,7 @@ import {
 } from "./styled";
 
 import {
-  clearImageViewerImage,
+  changeMessageStatus,
   insertMessage,
 } from "../../../../store/slice/room.slice";
 
@@ -96,15 +96,16 @@ const ChatInput: FC = () => {
           senderId: user.id,
           avatar: user.avatar,
           type: "image",
-          pending: true,
+          status: "pending",
           time: new Date().toString(),
           content: imagePreview,
         })
       );
       cancelImage();
-      // axios.post(`${apiUrl}/api/files/images`, formData).catch(() => {
-      //   toast("Fail to send image!", { type: "error" });
-      // });
+      axios.post(`${apiUrl}/api/files/images`, formData).catch(() => {
+        toast("Fail to send image!", { type: "error" });
+        dispatch(changeMessageStatus({ id, status: "error" }));
+      });
     }
   }
 

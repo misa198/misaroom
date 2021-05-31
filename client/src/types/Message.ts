@@ -8,5 +8,5 @@ export interface Message {
   time: string;
   content: string;
   type: MessageType;
-  pending?: boolean;
+  status?: "pending" | "ok" | "error";
 }

@@ -1,6 +1,7 @@
 import { FC, useState, memo, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Tooltip from "react-tooltip";
+import { Trash } from "react-feather";
 import Loader from "react-loader-spinner";
 
 import {
@@ -11,10 +12,16 @@ import {
   ChatMessageContentWrapper,
   ChatMessageContentImage,
   ChatMessageImagePending,
+  ChatMessageButton,
+  ChatMessageButtonsWrapper,
 } from "../ChatMessage/styled";
 
-import { setImageViewerImage } from "../../../../store/slice/room.slice";
+import {
+  deleteMessage,
+  setImageViewerImage,
+} from "../../../../store/slice/room.slice";
 
+import { RootState } from "../../../../store";
 import { Message } from "../../../../types/Message";
 
 import { socket } from "../../../../shared/socket/SocketProvider";
@@ -25,6 +32,7 @@ interface PropTypes {
 
 const ChatMessageImage: FC<PropTypes> = ({ message }: PropTypes) => {
   const dispatch = useDispatch();
+  const roomId = useSelector((state: RootState) => state.room.id);
   const [isSender, setIsSender] = useState(false);
 
   useEffect(() => {
@@ -33,6 +41,14 @@ const ChatMessageImage: FC<PropTypes> = ({ message }: PropTypes) => {
 
   function displayImage(): void {
     dispatch(setImageViewerImage(message.content));
+  }
+
+  function removeMessage(): void {
+    socket.emit("remove-message", {
+      messageId: message.id,
+      roomId,
+    });
+    dispatch(deleteMessage(message.id));
   }
 
   return (
@@ -51,7 +67,7 @@ const ChatMessageImage: FC<PropTypes> = ({ message }: PropTypes) => {
           {message.sender}
         </ChatMessageSender>
         <ChatMessageContentImage src={message.content} onClick={displayImage} />
-        {message.pending && (
+        {message.status === "pending" && (
           <ChatMessageImagePending>
             <Loader
               type="ThreeDots"
@@ -63,6 +79,16 @@ const ChatMessageImage: FC<PropTypes> = ({ message }: PropTypes) => {
         )}
       </ChatMessageContentWrapper>
       <Tooltip effect="solid" place="top" />
+      <ChatMessageButtonsWrapper isSender={isSender}>
+        {isSender && message.status === "ok" && message.type !== "removed" && (
+          <>
+            <ChatMessageButton data-tip="Delete" onClick={removeMessage}>
+              <Trash size={16} />
+            </ChatMessageButton>
+            <Tooltip effect="solid" place="top" />
+          </>
+        )}
+      </ChatMessageButtonsWrapper>
     </ChatMessageWrapper>
   );
 };

@@ -125,6 +125,23 @@ const slice = createSlice({
         messages: [...messages],
       };
     },
+    changeMessageStatus(
+      state: State,
+      action: PayloadAction<{
+        id: string;
+        status: "error" | "ok";
+      }>
+    ) {
+      const messageIndex = state.messages.findIndex(
+        (m) => m.id === action.payload.id
+      );
+      const messages = JSON.parse(JSON.stringify(state.messages));
+      messages[messageIndex].status = action.payload.status;
+      return {
+        ...state,
+        messages: [...messages],
+      };
+    },
     setImageViewerImage(state: State, action: PayloadAction<string>) {
       return {
         ...state,
@@ -152,6 +169,7 @@ export const {
   increaseNotification,
   insertMessage,
   deleteMessage,
+  changeMessageStatus,
   setImageViewerImage,
   clearImageViewerImage,
 } = slice.actions;

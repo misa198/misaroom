@@ -15,6 +15,7 @@ import {
   insertMessage,
   increaseNotification,
   deleteMessage,
+  changeMessageStatus,
 } from "../../../../store/slice/room.slice";
 
 import { socket } from "../../../../shared/socket/SocketProvider";
@@ -31,9 +32,13 @@ const Chat: FC = () => {
 
   useEffect((): any => {
     socket.on("new-message", (message) => {
-      if (!showChat) play();
-      dispatch(insertMessage(message));
-      dispatch(increaseNotification());
+      if (message.type === "text" || message.senderId !== socket.id) {
+        if (!showChat) play();
+        dispatch(insertMessage(message));
+        dispatch(increaseNotification());
+      } else {
+        dispatch(changeMessageStatus({ id: message.id, status: "ok" }));
+      }
     });
 
     return () => socket.off("new-message");
