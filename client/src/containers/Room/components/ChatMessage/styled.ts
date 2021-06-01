@@ -59,10 +59,10 @@ export const ChatMessageContentWrapper = styled.div<{
 
   @keyframes messageContentAppear {
     0% {
-      transform: scaleX(0);
+      transform: scale(0);
     }
     100% {
-      transform: scaleX(1);
+      transform: scale(1);
     }
   }
 `;
