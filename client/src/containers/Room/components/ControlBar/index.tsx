@@ -1,4 +1,5 @@
 import { FC, useEffect, memo } from "react";
+import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Tooltip from "react-tooltip";
 import {
@@ -29,11 +30,14 @@ import {
 
 import { socket } from "../../../../shared/socket/SocketProvider";
 
+import leaveRoomSound from "../../../../assets/audios/leave-room-sound.mp3";
+
 interface PropTypes {
   showControlBar: boolean;
 }
 
 const ControlBar: FC<PropTypes> = ({ showControlBar }: PropTypes) => {
+  const history = useHistory();
   const dispatch = useDispatch();
   const status = useSelector((state: RootState) => state.room.status);
   const roomId = useSelector((state: RootState) => state.room.id);
@@ -54,7 +58,9 @@ const ControlBar: FC<PropTypes> = ({ showControlBar }: PropTypes) => {
   }
 
   function endRoom(): void {
-    window.location.href = "/";
+    new Audio(leaveRoomSound).play().then(() => {
+      history.push("/");
+    });
   }
 
   function changeMicStatus(): void {
