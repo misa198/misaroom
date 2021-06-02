@@ -3,6 +3,7 @@ import { User } from "../../types/User";
 import { Message } from "../../types/Message";
 
 interface State {
+  calling: boolean;
   id: string;
   status: {
     showChat: boolean;
@@ -16,6 +17,7 @@ interface State {
 }
 
 const initialState: State = {
+  calling: false,
   id: "",
   status: {
     showChat: false,
@@ -34,6 +36,12 @@ const slice = createSlice({
   reducers: {
     clearState() {
       return initialState;
+    },
+    changeCallingStatus(state, action: PayloadAction<boolean>) {
+      return {
+        ...state,
+        calling: action.payload,
+      };
     },
     changeChatStatus(state) {
       return {
@@ -159,6 +167,7 @@ const slice = createSlice({
 
 export const {
   clearState,
+  changeCallingStatus,
   changeChatStatus,
   setUsers,
   addNewUser,

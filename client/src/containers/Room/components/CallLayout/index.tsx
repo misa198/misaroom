@@ -1,5 +1,6 @@
 import { useState, FC, useEffect, memo } from "react";
-import { useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 
 import { CallLayoutWrapper } from "./styled";
 
@@ -8,19 +9,24 @@ import CallLayoutItemCaller from "../CallLayoutItemCaller";
 import ControlBar from "../ControlBar";
 
 import { RootState } from "../../../../store";
+import { changeCallingStatus } from "../../../../store/slice/room.slice";
 
 import { calLayout, Layout } from "../../../../shared/cal-layout/cal-layout";
 import { socket } from "../../../../shared/socket/SocketProvider";
 
 const CallLayout: FC = () => {
+  const history = useHistory();
+  const dispatch = useDispatch();
   const users = useSelector((state: RootState) => state.room.users);
   const status = useSelector((state: RootState) => state.room.status);
+  const calling = useSelector((state: RootState) => state.room.calling);
 
+  const [dirty, setDirty] = useState<boolean>(false);
   const [layout, setLayout] = useState<Layout>({ columns: 0, rows: 0 });
   const [showControlBar, setShowControlBar] = useState<boolean>(false);
   const [audioStream, setAudioStream] = useState<MediaStream>();
-  const [videoTrack, setVideoTrack] = useState<MediaStreamTrack>();
   const [videoStream, setVideoStream] = useState<MediaStream>();
+  const [videoTrack, setVideoTrack] = useState<MediaStreamTrack>();
 
   useEffect(() => {
     setLayout(calLayout(users.length));
@@ -75,6 +81,22 @@ const CallLayout: FC = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status.camera]);
+
+  useEffect(() => {
+    if (!calling && dirty) {
+      if (audioStream) audioStream.getTracks().forEach((track) => track.stop());
+      if (videoStream) videoStream.getTracks().forEach((track) => track.stop());
+      history.push("/");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [calling]);
+
+  useEffect(() => {
+    if (!dirty) {
+      setDirty(true);
+      dispatch(changeCallingStatus(true));
+    }
+  }, [dirty, dispatch]);
 
   if (audioStream)
     return (
