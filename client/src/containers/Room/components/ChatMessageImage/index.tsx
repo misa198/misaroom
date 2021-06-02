@@ -1,7 +1,7 @@
 import { FC, useState, memo, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Tooltip from "react-tooltip";
-import { Trash } from "react-feather";
+import { Trash, AlertCircle } from "react-feather";
 import Loader from "react-loader-spinner";
 
 import {
@@ -75,6 +75,11 @@ const ChatMessageImage: FC<PropTypes> = ({ message }: PropTypes) => {
               height={30}
               width={30}
             />
+          </ChatMessageImagePending>
+        )}
+        {message.status === "error" && (
+          <ChatMessageImagePending>
+            <AlertCircle size={28} color="red" />
           </ChatMessageImagePending>
         )}
       </ChatMessageContentWrapper>
