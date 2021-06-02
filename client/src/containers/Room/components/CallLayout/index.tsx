@@ -24,7 +24,6 @@ const CallLayout: FC = () => {
   const users = useSelector((state: RootState) => state.room.users);
   const status = useSelector((state: RootState) => state.room.status);
   const calling = useSelector((state: RootState) => state.room.calling);
-  const roomId = useSelector((state: RootState) => state.room.id);
 
   const [dirty, setDirty] = useState<boolean>(false);
   const [layout, setLayout] = useState<Layout>({ columns: 0, rows: 0 });
