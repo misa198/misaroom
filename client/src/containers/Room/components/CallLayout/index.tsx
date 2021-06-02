@@ -67,6 +67,18 @@ const CallLayout: FC = () => {
             setVideoTrack(stream.getVideoTracks()[0]);
             audioStream.addTrack(stream.getVideoTracks()[0]);
           });
+      } else if (status.shareScreen) {
+        const mediaDevices = navigator.mediaDevices as any;
+        mediaDevices
+          .getDisplayMedia({
+            video: true,
+            audio: true,
+          })
+          .then((stream: MediaStream) => {
+            setVideoStream(stream);
+            setVideoTrack(stream.getVideoTracks()[0]);
+            audioStream.addTrack(stream.getVideoTracks()[0]);
+          });
       } else if (videoTrack && videoStream) {
         videoStream.getTracks().forEach((tracks) => tracks.stop());
         audioStream.removeTrack(videoTrack);
@@ -74,7 +86,7 @@ const CallLayout: FC = () => {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status.camera]);
+  }, [status.camera, status.shareScreen]);
 
   if (audioStream)
     return (

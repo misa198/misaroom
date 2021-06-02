@@ -114,7 +114,7 @@ const CallLayoutItem: FC<PropTypes> = ({
 
   return (
     <CallLayoutItemWrapper ref={ref}>
-      <CallLayoutItemDetails video={user.camera}>
+      <CallLayoutItemDetails video={user.camera || user.shareScreen}>
         <CallLayoutItemAvatarVoiceDetect>
           <CallLayoutItemAvatar width={width} height={height}>
             <CallLayoutItemAvatarImg src={user.avatar} />
@@ -122,7 +122,7 @@ const CallLayoutItem: FC<PropTypes> = ({
         </CallLayoutItemAvatarVoiceDetect>
       </CallLayoutItemDetails>
 
-      <CallLayoutItemVideoWrapper video={user.camera}>
+      <CallLayoutItemVideoWrapper video={user.camera || user.shareScreen}>
         <CallLayoutItemVideo controls={false} ref={videoRef} autoPlay />
       </CallLayoutItemVideoWrapper>
 
