@@ -12,7 +12,7 @@ import { AppService } from 'src/app.service';
 import { FilesGateway } from './files.gateway';
 import { FilesService } from './files.service';
 
-@Controller('files')
+@Controller('/api/files')
 export class FilesController {
   constructor(
     private readonly filesService: FilesService,

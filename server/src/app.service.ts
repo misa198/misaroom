@@ -1,5 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { WsException } from '@nestjs/websockets';
+
 import { RedisCacheService } from './redis-cache/redis-cache.service';
 import { RoomDetails, User } from './types/roomDetails';
 
