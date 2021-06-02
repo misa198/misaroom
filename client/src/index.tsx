@@ -15,14 +15,14 @@ import SocketProvider from "./shared/socket/SocketProvider";
 
 ReactDOM.render(
   <React.StrictMode>
-    <Provider store={store}>
-      <BrowserRouter>
+    <BrowserRouter>
+      <Provider store={store}>
         <SocketProvider>
           <GlobalStyle />
           <App />
         </SocketProvider>
-      </BrowserRouter>
-    </Provider>
+      </Provider>
+    </BrowserRouter>
     <ToastContainer />
   </React.StrictMode>,
   document.getElementById("misa-room")

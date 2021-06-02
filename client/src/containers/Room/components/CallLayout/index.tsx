@@ -86,7 +86,12 @@ const CallLayout: FC = () => {
     if (!calling && dirty) {
       if (audioStream) audioStream.getTracks().forEach((track) => track.stop());
       if (videoStream) videoStream.getTracks().forEach((track) => track.stop());
-      history.push("/");
+      history.push({
+        pathname: "/",
+        state: {
+          valid: true,
+        },
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [calling]);
