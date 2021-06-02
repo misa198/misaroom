@@ -18,7 +18,7 @@ const SocketProvider: FC<PropTypes> = ({ children }: PropTypes) => {
   const [connected, setConnected] = useState(false);
 
   useEffect(() => {
-    if (location.pathname === "/") {
+    if (location.pathname === "/" && socket.connected) {
       socket.disconnect();
       socket.connect();
     }
