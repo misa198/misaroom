@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { User } from "../../types/User";
 import { Message } from "../../types/Message";
 
-type SharingScreenStatus = "watching" | "sharing" | "unset";
+type SharingScreenStatus = "watching" | "sharing" | "unset" | "pending";
 
 interface State {
   calling: boolean;

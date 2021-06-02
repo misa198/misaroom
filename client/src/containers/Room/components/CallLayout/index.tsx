@@ -10,7 +10,10 @@ import CallLayoutItemScreenSharing from "../CallLayoutItemScreenSharing";
 import ControlBar from "../ControlBar";
 
 import { RootState } from "../../../../store";
-import { changeCallingStatus } from "../../../../store/slice/room.slice";
+import {
+  changeCallingStatus,
+  changeSharingScreenStatus,
+} from "../../../../store/slice/room.slice";
 
 import { calLayout, Layout } from "../../../../shared/cal-layout/cal-layout";
 import { socket } from "../../../../shared/socket/SocketProvider";
@@ -21,6 +24,7 @@ const CallLayout: FC = () => {
   const users = useSelector((state: RootState) => state.room.users);
   const status = useSelector((state: RootState) => state.room.status);
   const calling = useSelector((state: RootState) => state.room.calling);
+  const roomId = useSelector((state: RootState) => state.room.id);
 
   const [dirty, setDirty] = useState<boolean>(false);
   const [layout, setLayout] = useState<Layout>({ columns: 0, rows: 0 });
@@ -105,6 +109,32 @@ const CallLayout: FC = () => {
       dispatch(changeCallingStatus(true));
     }
   }, [dirty, dispatch]);
+
+  useEffect((): any => {
+    socket.on("request-sharing-screen", ({ userId }) => {
+      dispatch(
+        changeSharingScreenStatus({
+          userId,
+          status: "pending",
+        })
+      );
+    });
+
+    return () => socket.off("request-sharing-screen");
+  }, [dispatch]);
+
+  useEffect((): any => {
+    socket.on("stop-sharing-screen", () => {
+      dispatch(
+        changeSharingScreenStatus({
+          userId: undefined,
+          status: "unset",
+        })
+      );
+    });
+
+    return () => socket.off("stop-sharing-screen");
+  }, [dispatch]);
 
   if (audioStream)
     return (

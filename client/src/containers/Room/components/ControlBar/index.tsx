@@ -82,6 +82,7 @@ const ControlBar: FC<PropTypes> = ({ showControlBar }: PropTypes) => {
   }
 
   function shareScreen(): void {
+    socket.emit("request-sharing-screen", { roomId });
     dispatch(
       changeSharingScreenStatus({
         userId: socket.id,
@@ -91,6 +92,7 @@ const ControlBar: FC<PropTypes> = ({ showControlBar }: PropTypes) => {
   }
 
   function stopShareScreen(): void {
+    socket.emit("stop-sharing-screen", { roomId });
     dispatch(
       changeSharingScreenStatus({
         userId: undefined,
