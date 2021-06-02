@@ -102,7 +102,7 @@ const ChatInput: FC = () => {
         })
       );
       cancelImage();
-      axios.post(`${apiUrl}/api/files/images`, formData).catch(() => {
+      axios.post(`${apiUrl}api/files/images`, formData).catch(() => {
         toast("Fail to send image!", { type: "error" });
         dispatch(changeMessageStatus({ id, status: "error" }));
         cancelImage();
