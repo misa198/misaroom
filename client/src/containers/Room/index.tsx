@@ -75,7 +75,12 @@ const Room: FC = () => {
 
   useEffect((): any => {
     socket.on("join-room-fail", () => {
-      history.push("/");
+      history.push({
+        pathname: "/",
+        state: {
+          valid: true,
+        },
+      });
       toast("Room not found", {
         type: "error",
       });
