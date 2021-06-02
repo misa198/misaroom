@@ -47,7 +47,12 @@ const Room: FC = () => {
       setName(state?.name);
       setDirty(true);
     } else {
-      history.push("/");
+      history.push({
+        pathname: "/",
+        state: {
+          valid: true,
+        },
+      });
       toast("Room not found", {
         type: "error",
       });
