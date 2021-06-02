@@ -5,7 +5,6 @@ import {
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
-  WsException,
 } from '@nestjs/websockets';
 import { nanoid } from 'nanoid';
 import { Server, Socket } from 'socket.io';
@@ -30,8 +29,6 @@ import { SendMessageValidationPipe } from './pipes/send-message.pipe';
 import { SwitchDeviceValidationPipe } from './pipes/switch-device.pipe';
 import { AppService } from './app.service';
 import { FilesService } from './files/files.service';
-import { RequestSharingScreen } from './dtos/request-sharing-screen.dto';
-import { RequestSharingScreenValidationPipe } from './pipes/request-sharing-screen.pipe';
 
 @WebSocketGateway({})
 export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -86,6 +83,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
         avatar,
         mic: false,
         camera: false,
+        shareScreen: false,
       });
       await this.redisCacheService.set(roomId, JSON.stringify(room));
       const roomIds = JSON.parse(
@@ -97,7 +95,6 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       client.join(roomId);
       client.emit('join-room-successfully', {
         users: room.users,
-        sharingScreen: room.sharingScreen,
       });
       client.to(roomId).emit('new-member', {
         name: name,
@@ -140,44 +137,6 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       type: payload.type,
       enabled: payload.enabled,
     });
-  }
-
-  @SubscribeMessage('request-sharing-screen')
-  @UsePipes(new RequestSharingScreenValidationPipe())
-  async handleRequestSharingScreen(
-    client: Socket,
-    payload: RequestSharingScreen,
-  ) {
-    const { room, userIndex } = await this.appService.authenticateWs(
-      client.id,
-      payload.roomId,
-    );
-    if (room.sharingScreen)
-      throw new WsException({ message: 'One member is sharing!' });
-
-    room.sharingScreen = {
-      status: true,
-      user: room.users[userIndex],
-    };
-    await this.redisCacheService.set(payload.roomId, JSON.stringify(room));
-    client.to(payload.roomId).emit('request-sharing-screen', {
-      userId: client.id,
-    });
-  }
-
-  @SubscribeMessage('stop-sharing-screen')
-  @UsePipes(new RequestSharingScreenValidationPipe())
-  async handleStopSharingScreen(client: Socket, payload: RequestSharingScreen) {
-    const { room } = await this.appService.authenticateWs(
-      client.id,
-      payload.roomId,
-    );
-    if (!room.sharingScreen || room.sharingScreen.user.id !== client.id)
-      throw new WsException({ message: 'Bad request!' });
-
-    room.sharingScreen = undefined;
-    await this.redisCacheService.set(payload.roomId, JSON.stringify(room));
-    client.to(payload.roomId).emit('stop-sharing-screen');
   }
 
   @SubscribeMessage('send-message')
@@ -226,8 +185,6 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
         room.users.findIndex((user) => user.id === client.id),
         1,
       );
-      if (room.sharingScreen?.user.id === client.id)
-        room.sharingScreen = undefined;
       if (room.users.length === 0) {
         this.redisCacheService.del(roomId);
         try {

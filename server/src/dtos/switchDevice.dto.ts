@@ -1,5 +1,5 @@
 export interface SwitchDeviceDto {
   enabled: boolean;
-  type: 'mic' | 'camera';
+  type: 'mic' | 'camera' | 'shareScreen';
   roomId: string;
 }

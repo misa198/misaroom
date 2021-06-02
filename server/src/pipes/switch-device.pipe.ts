@@ -11,7 +11,7 @@ export class SwitchDeviceValidationPipe implements PipeTransform {
       const schema = joi.object({
         roomId: joi.string().length(32).required(),
         enabled: joi.boolean().required(),
-        type: joi.string().allow('mic', 'camera').required(),
+        type: joi.string().allow('mic', 'camera', 'shareScreen').required(),
       });
       const { error, value } = schema.validate(values);
       if (!value)

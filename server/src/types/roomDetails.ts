@@ -4,14 +4,11 @@ export interface User {
   id: string;
   mic: boolean;
   camera: boolean;
+  shareScreen: boolean;
 }
 
 export interface RoomDetails {
   password?: string;
   creator: string;
   users: User[];
-  sharingScreen?: {
-    status: boolean;
-    user: User;
-  };
 }
