@@ -59,7 +59,7 @@ const CreateRoomForm: FC = () => {
               id="name"
               name="name"
               type="text"
-              placeholder="name"
+              placeholder="your name"
               onChange={formik.handleChange}
               value={formik.values.name}
               autoComplete="off"
@@ -73,7 +73,7 @@ const CreateRoomForm: FC = () => {
               id="password"
               name="password"
               type="password"
-              placeholder="password (optional)"
+              placeholder="room password (optional)"
               onChange={formik.handleChange}
               value={formik.values.password}
               autoComplete="off"

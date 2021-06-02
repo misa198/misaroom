@@ -61,7 +61,7 @@ const PasswordForm: FC<PropTypes> = ({ name, roomId }: PropTypes) => {
               id="password"
               name="password"
               type="password"
-              placeholder="password"
+              placeholder="room password"
               onChange={formik.handleChange}
               value={formik.values.password}
               autoComplete="off"

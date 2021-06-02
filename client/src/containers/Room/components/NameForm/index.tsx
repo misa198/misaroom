@@ -40,7 +40,7 @@ const NameForm: FC<PropTypes> = ({ setName }: PropTypes) => {
               id="name"
               name="name"
               type="text"
-              placeholder="name"
+              placeholder="your name"
               onChange={formik.handleChange}
               value={formik.values.name}
               autoComplete="off"
