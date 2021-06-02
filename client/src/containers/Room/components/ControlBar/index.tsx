@@ -103,24 +103,29 @@ const ControlBar: FC<PropTypes> = ({ showControlBar }: PropTypes) => {
     <ControlBarWrapper showControlBar={showControlBar}>
       <ControlBarContainer>
         {status.sharingScreen.status === "unset" && (
-          <ControlBarButton
-            active={false}
-            data-tip="Share your screen"
-            onClick={shareScreen}
-          >
-            <Monitor />
-          </ControlBarButton>
+          <>
+            <ControlBarButton
+              active={false}
+              data-tip="Share your screen"
+              onClick={shareScreen}
+            >
+              <Monitor />
+            </ControlBarButton>
+            <Tooltip place="top" type="dark" effect="solid" />
+          </>
         )}
         {status.sharingScreen.status === "sharing" && (
-          <ControlBarButton
-            active
-            data-tip="Stop share"
-            onClick={stopShareScreen}
-          >
-            <Monitor />
-          </ControlBarButton>
+          <>
+            <ControlBarButton
+              active
+              data-tip="Stop share"
+              onClick={stopShareScreen}
+            >
+              <Monitor />
+            </ControlBarButton>
+            <Tooltip place="top" type="dark" effect="solid" />
+          </>
         )}
-        <Tooltip place="top" type="dark" effect="solid" />
         <ControlBarButton
           active={status.camera}
           data-tip="Camera"
