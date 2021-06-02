@@ -1,4 +1,5 @@
 import { useEffect, useState, FC, ReactNode } from "react";
+import { useLocation } from "react-router-dom";
 import { io } from "socket.io-client";
 import { toast } from "react-toastify";
 
@@ -10,10 +11,18 @@ interface PropTypes {
 
 const socket = io(apiUrl, {
   transports: ["websocket"],
-}).connect();
+});
 
 const SocketProvider: FC<PropTypes> = ({ children }: PropTypes) => {
+  const location = useLocation();
   const [connected, setConnected] = useState(false);
+
+  useEffect(() => {
+    if (location.pathname === "/") {
+      socket.disconnect();
+      socket.connect();
+    }
+  }, [location.pathname]);
 
   useEffect(() => {
     socket.on("connected", () => {
