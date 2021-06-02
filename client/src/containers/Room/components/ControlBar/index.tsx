@@ -1,4 +1,5 @@
 import { FC, useEffect, memo } from "react";
+import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Tooltip from "react-tooltip";
 import {
@@ -21,7 +22,6 @@ import {
 import { RootState } from "../../../../store";
 
 import {
-  changeCallingStatus,
   changeChatStatus as changeChatStatusAction,
   changeSharingScreenStatus,
   switchCam,
@@ -38,6 +38,7 @@ interface PropTypes {
 }
 
 const ControlBar: FC<PropTypes> = ({ showControlBar }: PropTypes) => {
+  const history = useHistory();
   const dispatch = useDispatch();
   const status = useSelector((state: RootState) => state.room.status);
   const roomId = useSelector((state: RootState) => state.room.id);
@@ -59,7 +60,7 @@ const ControlBar: FC<PropTypes> = ({ showControlBar }: PropTypes) => {
 
   function endRoom(): void {
     new Audio(leaveRoomSound).play().then(() => {
-      dispatch(changeCallingStatus(false));
+      history.push("/");
     });
   }
 

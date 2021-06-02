@@ -1,6 +1,5 @@
 import { useState, FC, useEffect, memo } from "react";
-import { useHistory } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 
 import { CallLayoutWrapper } from "./styled";
 
@@ -9,27 +8,19 @@ import CallLayoutItemCaller from "../CallLayoutItemCaller";
 import ControlBar from "../ControlBar";
 
 import { RootState } from "../../../../store";
-import {
-  changeCallingStatus,
-  changeSharingScreenStatus,
-} from "../../../../store/slice/room.slice";
 
 import { calLayout, Layout } from "../../../../shared/cal-layout/cal-layout";
 import { socket } from "../../../../shared/socket/SocketProvider";
 
 const CallLayout: FC = () => {
-  const history = useHistory();
-  const dispatch = useDispatch();
   const users = useSelector((state: RootState) => state.room.users);
   const status = useSelector((state: RootState) => state.room.status);
-  const calling = useSelector((state: RootState) => state.room.calling);
 
-  const [dirty, setDirty] = useState<boolean>(false);
   const [layout, setLayout] = useState<Layout>({ columns: 0, rows: 0 });
   const [showControlBar, setShowControlBar] = useState<boolean>(false);
   const [audioStream, setAudioStream] = useState<MediaStream>();
-  const [videoStream, setVideoStream] = useState<MediaStream>();
   const [videoTrack, setVideoTrack] = useState<MediaStreamTrack>();
+  const [videoStream, setVideoStream] = useState<MediaStream>();
 
   useEffect(() => {
     if (status.sharingScreen.userId) {
@@ -86,53 +77,6 @@ const CallLayout: FC = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status.camera]);
-
-  useEffect(() => {
-    if (!calling && dirty) {
-      if (audioStream) audioStream.getTracks().forEach((track) => track.stop());
-      if (videoStream) videoStream.getTracks().forEach((track) => track.stop());
-      history.push({
-        pathname: "/",
-        state: {
-          valid: true,
-        },
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [calling]);
-
-  useEffect(() => {
-    if (!dirty) {
-      setDirty(true);
-      dispatch(changeCallingStatus(true));
-    }
-  }, [dirty, dispatch]);
-
-  useEffect((): any => {
-    socket.on("request-sharing-screen", ({ userId }) => {
-      dispatch(
-        changeSharingScreenStatus({
-          userId,
-          status: "pending",
-        })
-      );
-    });
-
-    return () => socket.off("request-sharing-screen");
-  }, [dispatch]);
-
-  useEffect((): any => {
-    socket.on("stop-sharing-screen", () => {
-      dispatch(
-        changeSharingScreenStatus({
-          userId: undefined,
-          status: "unset",
-        })
-      );
-    });
-
-    return () => socket.off("stop-sharing-screen");
-  }, [dispatch]);
 
   if (audioStream)
     return (
