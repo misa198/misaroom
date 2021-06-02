@@ -19,6 +19,7 @@ const CallLayout: FC = () => {
   const [layout, setLayout] = useState<Layout>({ columns: 0, rows: 0 });
   const [showControlBar, setShowControlBar] = useState<boolean>(false);
   const [audioStream, setAudioStream] = useState<MediaStream>();
+  const [videoTrack, setVideoTrack] = useState<MediaStreamTrack>();
   const [videoStream, setVideoStream] = useState<MediaStream>();
 
   useEffect(() => {
@@ -62,9 +63,11 @@ const CallLayout: FC = () => {
         .getUserMedia({ video: true, audio: false })
         .then((stream) => {
           setVideoStream(stream);
+          setVideoTrack(stream.getVideoTracks()[0]);
         });
-    } else if (videoStream) {
+    } else if (videoTrack && videoStream) {
       videoStream.getTracks().forEach((tracks) => tracks.stop());
+      videoTrack.stop();
       setVideoStream(undefined);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -84,6 +87,7 @@ const CallLayout: FC = () => {
             <CallLayoutItem
               callerAudioStream={audioStream}
               callerVideoStream={videoStream}
+              callerVideoTrack={videoTrack}
               user={user}
               key={`user_${index.toFixed()}`}
             />
