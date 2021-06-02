@@ -23,9 +23,9 @@ import { RootState } from "../../../../store";
 
 import {
   changeChatStatus as changeChatStatusAction,
-  changeSharingScreenStatus,
   switchCam,
   switchMic,
+  switchShareScreen,
   userSwitchDevice,
 } from "../../../../store/slice/room.slice";
 
@@ -82,61 +82,42 @@ const ControlBar: FC<PropTypes> = ({ showControlBar }: PropTypes) => {
     dispatch(switchCam());
   }
 
-  function shareScreen(): void {
-    socket.emit("request-sharing-screen", { roomId });
-    dispatch(
-      changeSharingScreenStatus({
-        userId: socket.id,
-        status: "sharing",
-      })
-    );
-  }
-
-  function stopShareScreen(): void {
-    socket.emit("stop-sharing-screen", { roomId });
-    dispatch(
-      changeSharingScreenStatus({
-        userId: undefined,
-        status: "unset",
-      })
-    );
+  function changeShareScreenStatus(): void {
+    socket.emit("switch-device", {
+      enabled: !status.shareScreen,
+      type: "shareScreen",
+      roomId,
+    });
+    dispatch(switchShareScreen());
   }
 
   return (
     <ControlBarWrapper showControlBar={showControlBar}>
       <ControlBarContainer>
-        {status.sharingScreen.status === "unset" && (
+        {!status.camera && (
           <>
             <ControlBarButton
-              active={false}
+              active={status.shareScreen}
               data-tip="Share your screen"
-              onClick={shareScreen}
+              onClick={changeShareScreenStatus}
             >
               <Monitor />
             </ControlBarButton>
             <Tooltip place="top" type="dark" effect="solid" />
           </>
         )}
-        {status.sharingScreen.status === "sharing" && (
+        {!status.shareScreen && (
           <>
             <ControlBarButton
-              active
-              data-tip="Stop share"
-              onClick={stopShareScreen}
+              active={status.camera}
+              data-tip="Camera"
+              onClick={changeCameraStatus}
             >
-              <Monitor />
+              {status.camera ? <Camera /> : <CameraOff />}
             </ControlBarButton>
             <Tooltip place="top" type="dark" effect="solid" />
           </>
         )}
-        <ControlBarButton
-          active={status.camera}
-          data-tip="Camera"
-          onClick={changeCameraStatus}
-        >
-          {status.camera ? <Camera /> : <CameraOff />}
-        </ControlBarButton>
-        <Tooltip place="top" type="dark" effect="solid" />
         <ControlBarButton
           active={status.audio}
           data-tip="Microphone"

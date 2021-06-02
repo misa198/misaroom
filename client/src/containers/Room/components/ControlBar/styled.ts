@@ -16,6 +16,7 @@ export const ControlBarWrapper = styled.div<{ showControlBar: boolean }>`
 export const ControlBarContainer = styled.div`
   height: 100%;
   display: flex;
+  transition: all 300ms;
 `;
 
 export const ControlBarButton = styled.button<{

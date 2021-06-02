@@ -15,12 +15,7 @@ import Chat from "./components/Chat";
 import { socket } from "../../shared/socket/SocketProvider";
 
 import { RootState } from "../../store";
-import {
-  setUsers,
-  addNewUser,
-  removeUser,
-  changeSharingScreenStatus,
-} from "../../store/slice/room.slice";
+import { setUsers, addNewUser, removeUser } from "../../store/slice/room.slice";
 
 interface LocationState {
   name: string;
@@ -92,14 +87,6 @@ const Room: FC = () => {
   useEffect((): any => {
     socket.on("join-room-successfully", (data) => {
       dispatch(setUsers({ users: data.users, id: roomId }));
-      if (data.sharingScreen) {
-        dispatch(
-          changeSharingScreenStatus({
-            status: "watching",
-            userId: data.sharingScreen.user.id,
-          })
-        );
-      }
     });
 
     return () => socket.off("join-room-successfully");
@@ -128,14 +115,6 @@ const Room: FC = () => {
 
   useEffect((): any => {
     socket.on("leave-room", (data) => {
-      if (data.userId) {
-        dispatch(
-          changeSharingScreenStatus({
-            userId: undefined,
-            status: "unset",
-          })
-        );
-      }
       dispatch(removeUser(data.userId));
     });
 

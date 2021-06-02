@@ -23,10 +23,8 @@ const CallLayout: FC = () => {
   const [videoStream, setVideoStream] = useState<MediaStream>();
 
   useEffect(() => {
-    if (status.sharingScreen.userId) {
-      setLayout(calLayout(users.length + 1));
-    } else setLayout(calLayout(users.length));
-  }, [status.sharingScreen.userId, users.length]);
+    setLayout(calLayout(users.length));
+  }, [users.length]);
 
   useEffect((): any => {
     if (showControlBar) {

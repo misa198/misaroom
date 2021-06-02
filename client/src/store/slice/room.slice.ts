@@ -2,18 +2,13 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { User } from "../../types/User";
 import { Message } from "../../types/Message";
 
-type SharingScreenStatus = "watching" | "sharing" | "unset" | "pending";
-
 interface State {
   id: string;
   status: {
     showChat: boolean;
     camera: boolean;
     audio: boolean;
-    sharingScreen: {
-      status: SharingScreenStatus;
-      userId?: string;
-    };
+    shareScreen: boolean;
   };
   users: User[];
   imageViewer: string;
@@ -27,9 +22,7 @@ const initialState: State = {
     showChat: false,
     audio: false,
     camera: false,
-    sharingScreen: {
-      status: "unset",
-    },
+    shareScreen: false,
   },
   users: [],
   imageViewer: "",
@@ -94,11 +87,20 @@ const slice = createSlice({
         },
       };
     },
+    switchShareScreen(state) {
+      return {
+        ...state,
+        status: {
+          ...state.status,
+          shareScreen: !state.status.shareScreen,
+        },
+      };
+    },
     userSwitchDevice(
       state,
       action: PayloadAction<{
         enabled: boolean;
-        type: "mic" | "camera";
+        type: "mic" | "camera" | "shareScreen";
         userId: string;
       }>
     ) {
@@ -107,24 +109,6 @@ const slice = createSlice({
       );
       state.users[index][action.payload.type] = action.payload.enabled;
       return state;
-    },
-    changeSharingScreenStatus(
-      state,
-      action: PayloadAction<{
-        status: SharingScreenStatus;
-        userId: string | undefined;
-      }>
-    ) {
-      return {
-        ...state,
-        status: {
-          ...state.status,
-          sharingScreen: {
-            status: action.payload.status,
-            userId: action.payload.userId,
-          },
-        },
-      };
     },
     increaseNotification(state: State) {
       if (!state.status.showChat)
@@ -192,8 +176,8 @@ export const {
   removeUser,
   switchCam,
   switchMic,
+  switchShareScreen,
   userSwitchDevice,
-  changeSharingScreenStatus,
   increaseNotification,
   insertMessage,
   deleteMessage,
