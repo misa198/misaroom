@@ -10,4 +10,8 @@ export interface RoomDetails {
   password?: string;
   creator: string;
   users: User[];
+  sharingScreen?: {
+    status: boolean;
+    user: User;
+  };
 }
