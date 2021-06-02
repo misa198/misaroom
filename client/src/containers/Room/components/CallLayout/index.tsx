@@ -6,6 +6,7 @@ import { CallLayoutWrapper } from "./styled";
 
 import CallLayoutItem from "../CallLayoutItem";
 import CallLayoutItemCaller from "../CallLayoutItemCaller";
+import CallLayoutItemScreenSharing from "../CallLayoutItemScreenSharing";
 import ControlBar from "../ControlBar";
 
 import { RootState } from "../../../../store";
@@ -29,8 +30,10 @@ const CallLayout: FC = () => {
   const [videoTrack, setVideoTrack] = useState<MediaStreamTrack>();
 
   useEffect(() => {
-    setLayout(calLayout(users.length));
-  }, [users.length]);
+    if (status.sharingScreen.userId) {
+      setLayout(calLayout(users.length + 1));
+    } else setLayout(calLayout(users.length));
+  }, [status.sharingScreen.userId, users.length]);
 
   useEffect((): any => {
     if (showControlBar) {
@@ -106,6 +109,12 @@ const CallLayout: FC = () => {
   if (audioStream)
     return (
       <CallLayoutWrapper layout={layout} onMouseMove={changeControlBar}>
+        {status.sharingScreen.userId && (
+          <CallLayoutItemScreenSharing
+            userId={status.sharingScreen.userId}
+            key="sharing_screen"
+          />
+        )}
         {users.map((user, index) =>
           user.id === socket.id ? (
             <CallLayoutItemCaller

@@ -23,6 +23,7 @@ import { RootState } from "../../../../store";
 import {
   changeCallingStatus,
   changeChatStatus as changeChatStatusAction,
+  changeSharingScreenStatus,
   switchCam,
   switchMic,
   userSwitchDevice,
@@ -80,12 +81,45 @@ const ControlBar: FC<PropTypes> = ({ showControlBar }: PropTypes) => {
     dispatch(switchCam());
   }
 
+  function shareScreen(): void {
+    dispatch(
+      changeSharingScreenStatus({
+        userId: socket.id,
+        status: "sharing",
+      })
+    );
+  }
+
+  function stopShareScreen(): void {
+    dispatch(
+      changeSharingScreenStatus({
+        userId: undefined,
+        status: "unset",
+      })
+    );
+  }
+
   return (
     <ControlBarWrapper showControlBar={showControlBar}>
       <ControlBarContainer>
-        <ControlBarButton active={false} data-tip="Share screen">
-          <Monitor />
-        </ControlBarButton>
+        {status.sharingScreen.status === "unset" && (
+          <ControlBarButton
+            active={false}
+            data-tip="Share your screen"
+            onClick={shareScreen}
+          >
+            <Monitor />
+          </ControlBarButton>
+        )}
+        {status.sharingScreen.status === "sharing" && (
+          <ControlBarButton
+            active
+            data-tip="Stop share"
+            onClick={stopShareScreen}
+          >
+            <Monitor />
+          </ControlBarButton>
+        )}
         <Tooltip place="top" type="dark" effect="solid" />
         <ControlBarButton
           active={status.camera}

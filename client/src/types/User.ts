@@ -4,5 +4,6 @@ export interface User {
   id: string;
   mic: boolean;
   camera: boolean;
+  sharingScreen: boolean;
   isNewMember: boolean;
 }
