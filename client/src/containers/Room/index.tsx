@@ -97,7 +97,12 @@ const Room: FC = () => {
 
   useEffect((): any => {
     socket.on("new-member", (data) => {
-      dispatch(addNewUser(data));
+      dispatch(
+        addNewUser({
+          ...data,
+          isNewMember: true,
+        })
+      );
     });
 
     return () => socket.off("new-member");

@@ -45,11 +45,20 @@ const CallLayoutItem: FC<PropTypes> = ({
   const [receivedVideoPeer, setReceivedVideoPeer] = useState<Instance>();
 
   useEffect(() => {
-    const initialAudioPeer = new Peer({
-      initiator: true,
-      trickle: false,
-      stream: callerAudioStream,
-    });
+    let initialAudioPeer: Instance;
+    if (user.isNewMember) {
+      initialAudioPeer = new Peer({
+        initiator: false,
+        trickle: false,
+        stream: callerAudioStream,
+      });
+    } else {
+      initialAudioPeer = new Peer({
+        initiator: true,
+        trickle: false,
+        stream: callerAudioStream,
+      });
+    }
     setAudioPeer(initialAudioPeer);
 
     const initialReceivedVideoPeer = new Peer({
@@ -65,7 +74,7 @@ const CallLayoutItem: FC<PropTypes> = ({
         userId: user.id,
       });
     });
-  }, [callerAudioStream, roomId, user.id]);
+  }, [callerAudioStream, roomId, user.id, user.isNewMember]);
 
   // =========================== Audio call ===========================
   useEffect((): any => {
