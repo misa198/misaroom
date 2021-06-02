@@ -21,6 +21,7 @@ import {
 import { User } from "../../../../types/User";
 import { RootState } from "../../../../store";
 import { socket } from "../../../../shared/socket/SocketProvider";
+import { stunUrl } from "../../../../constants/url";
 
 interface PropTypes {
   user: User;
@@ -48,12 +49,18 @@ const CallLayoutItem: FC<PropTypes> = ({
       initialPeer = new Peer({
         initiator: false,
         trickle: false,
+        config: {
+          iceServers: [{ urls: stunUrl }],
+        },
         stream: callerAudioStream,
       });
     } else {
       initialPeer = new Peer({
         initiator: true,
         trickle: false,
+        config: {
+          iceServers: [{ urls: stunUrl }],
+        },
         stream: callerAudioStream,
       });
     }
