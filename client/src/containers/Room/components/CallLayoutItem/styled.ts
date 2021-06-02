@@ -93,11 +93,15 @@ export const CallLayoutItemVideoWrapper = styled.div<{
   align-items: center;
   display: flex;
   visibility: ${(props) => (!props.video ? "hidden" : "unset")};
+  position: relative;
 `;
 
 export const CallLayoutItemVideo = styled.video`
-  width: auto;
-  height: auto;
+  position: absolute;
+  background-position: center;
+  background-size: cover;
+  width: 100%;
+  height: 100%;
   max-width: 100%;
   max-height: 100%;
   transform: rotateY(180deg);

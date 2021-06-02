@@ -57,7 +57,7 @@ const CallLayoutItemCaller: FC<PropTypes> = ({
       </CallLayoutItemDetails>
 
       <CallLayoutItemVideoWrapper video={status.camera}>
-        <CallLayoutItemVideo controls ref={videoRef} muted autoPlay />
+        <CallLayoutItemVideo controls={false} ref={videoRef} muted autoPlay />
       </CallLayoutItemVideoWrapper>
 
       <CallLayoutItemNameWrapper data-tip={user.name}>

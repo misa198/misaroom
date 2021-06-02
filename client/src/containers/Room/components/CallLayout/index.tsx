@@ -58,17 +58,20 @@ const CallLayout: FC = () => {
   }, [audioStream, status.audio]);
 
   useEffect(() => {
-    if (status.camera) {
-      navigator.mediaDevices
-        .getUserMedia({ video: true, audio: false })
-        .then((stream) => {
-          setVideoStream(stream);
-          setVideoTrack(stream.getVideoTracks()[0]);
-        });
-    } else if (videoTrack && videoStream) {
-      videoStream.getTracks().forEach((tracks) => tracks.stop());
-      videoTrack.stop();
-      setVideoStream(undefined);
+    if (audioStream) {
+      if (status.camera) {
+        navigator.mediaDevices
+          .getUserMedia({ video: true, audio: false })
+          .then((stream) => {
+            setVideoStream(stream);
+            setVideoTrack(stream.getVideoTracks()[0]);
+            audioStream.addTrack(stream.getVideoTracks()[0]);
+          });
+      } else if (videoTrack && videoStream) {
+        videoStream.getTracks().forEach((tracks) => tracks.stop());
+        audioStream.removeTrack(videoTrack);
+        setVideoStream(undefined);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status.camera]);
