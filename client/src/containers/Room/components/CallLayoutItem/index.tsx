@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useEffect, useRef, useState, memo } from "react";
 import { useSelector } from "react-redux";
 import useResize from "use-resize-observer";
 import Tooltip from "react-tooltip";
@@ -39,6 +39,7 @@ const CallLayoutItem: FC<PropTypes> = ({
   callerVideoTrack,
 }: PropTypes) => {
   const roomId = useSelector((state: RootState) => state.room.id);
+  const status = useSelector((state: RootState) => state.room.status);
 
   const { ref, width = 0, height = 0 } = useResize();
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -142,15 +143,19 @@ const CallLayoutItem: FC<PropTypes> = ({
 
       <CallLayoutItemVideoWrapper video={user.camera || user.shareScreen}>
         <CallLayoutItemVideo controls={false} ref={videoRef} autoPlay />
-        <CallLayoutItemVideoOverlay>
-          <CallLayoutItemVideoOverlayButton
-            data-tip="Full screen"
-            onClick={fullScreen}
-          >
-            <Maximize />
-          </CallLayoutItemVideoOverlayButton>
-          <Tooltip place="top" type="dark" effect="solid" />
-        </CallLayoutItemVideoOverlay>
+        {status.shareScreen && (
+          <>
+            <CallLayoutItemVideoOverlay>
+              <CallLayoutItemVideoOverlayButton
+                data-tip="Full screen"
+                onClick={fullScreen}
+              >
+                <Maximize />
+              </CallLayoutItemVideoOverlayButton>
+              <Tooltip place="top" type="dark" effect="solid" />
+            </CallLayoutItemVideoOverlay>
+          </>
+        )}
       </CallLayoutItemVideoWrapper>
 
       <CallLayoutItemNameWrapper data-tip={user.name}>
@@ -164,4 +169,4 @@ const CallLayoutItem: FC<PropTypes> = ({
   );
 };
 
-export default CallLayoutItem;
+export default memo(CallLayoutItem);

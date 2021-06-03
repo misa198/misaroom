@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef } from "react";
+import { FC, useEffect, useRef, memo } from "react";
 import { useSelector } from "react-redux";
 import useResize from "use-resize-observer";
 import Tooltip from "react-tooltip";
@@ -66,15 +66,19 @@ const CallLayoutItemCaller: FC<PropTypes> = ({
 
       <CallLayoutItemVideoWrapper video={status.camera || status.shareScreen}>
         <CallLayoutItemVideo controls={false} ref={videoRef} muted autoPlay />
-        <CallLayoutItemVideoOverlay>
-          <CallLayoutItemVideoOverlayButton
-            data-tip="Full screen"
-            onClick={fullScreen}
-          >
-            <Maximize />
-          </CallLayoutItemVideoOverlayButton>
-          <Tooltip place="top" type="dark" effect="solid" />
-        </CallLayoutItemVideoOverlay>
+        {status.shareScreen && (
+          <>
+            <CallLayoutItemVideoOverlay>
+              <CallLayoutItemVideoOverlayButton
+                data-tip="Full screen"
+                onClick={fullScreen}
+              >
+                <Maximize />
+              </CallLayoutItemVideoOverlayButton>
+              <Tooltip place="top" type="dark" effect="solid" />
+            </CallLayoutItemVideoOverlay>
+          </>
+        )}
       </CallLayoutItemVideoWrapper>
 
       <CallLayoutItemNameWrapper data-tip={user.name}>
@@ -88,4 +92,4 @@ const CallLayoutItemCaller: FC<PropTypes> = ({
   );
 };
 
-export default CallLayoutItemCaller;
+export default memo(CallLayoutItemCaller);
