@@ -134,9 +134,6 @@ export const CallLayoutItemVideo = styled.video`
   height: 100%;
   max-width: 100%;
   max-height: 100%;
-  transform: rotateY(180deg);
-  -webkit-transform: rotateY(180deg); /* Safari and Chrome */
-  -moz-transform: rotateY(180deg); /* Firefox */
   pointer-events: none;
 `;
 
