@@ -10,10 +10,7 @@ import { RedisCacheService } from './redis-cache.service';
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         store: redisStore,
-        url:
-          process.env.NODE_ENV === 'production'
-            ? process.env.REDIS_URL
-            : `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
+        url: process.env.REDIS_URL,
         ttl: configService.get('CACHE_TTL'),
       }),
     }),

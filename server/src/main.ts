@@ -1,8 +1,6 @@
 import { config } from 'dotenv';
 
-if (process.env.ENV !== 'production') {
-  config();
-}
+if (process.env.NODE_ENV !== 'production') config();
 
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
