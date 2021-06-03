@@ -83,6 +83,32 @@ export const CallLayoutItemNameMic = styled.div`
   margin-left: 8px;
 `;
 
+export const CallLayoutItemVideoOverlay = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: 200ms opacity;
+`;
+
+export const CallLayoutItemVideoOverlayButton = styled.button`
+  width: 50px;
+  height: 50px;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  border: none;
+  outline: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  cursor: pointer;
+`;
+
 export const CallLayoutItemVideoWrapper = styled.div<{
   video?: number | boolean;
 }>`
@@ -94,6 +120,10 @@ export const CallLayoutItemVideoWrapper = styled.div<{
   display: flex;
   visibility: ${(props) => (!props.video ? "hidden" : "unset")};
   position: relative;
+
+  &:hover ${CallLayoutItemVideoOverlay} {
+    opacity: 1;
+  }
 `;
 
 export const CallLayoutItemVideo = styled.video`

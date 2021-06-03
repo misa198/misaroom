@@ -2,7 +2,7 @@ import { FC, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import useResize from "use-resize-observer";
 import Tooltip from "react-tooltip";
-import { Mic, MicOff } from "react-feather";
+import { Maximize, Mic, MicOff } from "react-feather";
 import Peer, { Instance, SignalData } from "simple-peer";
 
 import {
@@ -16,6 +16,8 @@ import {
   CallLayoutItemNameMic,
   CallLayoutItemVideoWrapper,
   CallLayoutItemVideo,
+  CallLayoutItemVideoOverlay,
+  CallLayoutItemVideoOverlayButton,
 } from "./styled";
 
 import { User } from "../../../../types/User";
@@ -112,6 +114,22 @@ const CallLayoutItem: FC<PropTypes> = ({
     }
   }, [remoteStream]);
 
+  useEffect(() => {
+    if (!user.camera) {
+      if (videoRef.current) {
+        if (document.fullscreenElement !== null) {
+          document.exitFullscreen();
+        }
+      }
+    }
+  }, [user.camera]);
+
+  function fullScreen() {
+    if (videoRef.current) {
+      videoRef.current.requestFullscreen();
+    }
+  }
+
   return (
     <CallLayoutItemWrapper ref={ref}>
       <CallLayoutItemDetails video={user.camera || user.shareScreen}>
@@ -124,6 +142,15 @@ const CallLayoutItem: FC<PropTypes> = ({
 
       <CallLayoutItemVideoWrapper video={user.camera || user.shareScreen}>
         <CallLayoutItemVideo controls={false} ref={videoRef} autoPlay />
+        <CallLayoutItemVideoOverlay>
+          <CallLayoutItemVideoOverlayButton
+            data-tip="Full screen"
+            onClick={fullScreen}
+          >
+            <Maximize />
+          </CallLayoutItemVideoOverlayButton>
+          <Tooltip place="top" type="dark" effect="solid" />
+        </CallLayoutItemVideoOverlay>
       </CallLayoutItemVideoWrapper>
 
       <CallLayoutItemNameWrapper data-tip={user.name}>
