@@ -39,7 +39,6 @@ const CallLayoutItem: FC<PropTypes> = ({
   callerVideoTrack,
 }: PropTypes) => {
   const roomId = useSelector((state: RootState) => state.room.id);
-  const status = useSelector((state: RootState) => state.room.status);
 
   const { ref, width = 0, height = 0 } = useResize();
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -143,7 +142,7 @@ const CallLayoutItem: FC<PropTypes> = ({
 
       <CallLayoutItemVideoWrapper video={user.camera || user.shareScreen}>
         <CallLayoutItemVideo controls={false} ref={videoRef} autoPlay />
-        {status.shareScreen && (
+        {user.shareScreen && (
           <>
             <CallLayoutItemVideoOverlay>
               <CallLayoutItemVideoOverlayButton
