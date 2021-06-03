@@ -1,4 +1,4 @@
-import { FC, useEffect, useState, ChangeEvent, useRef } from "react";
+import { FC, useEffect, useState, ChangeEvent, useRef, memo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useFormik } from "formik";
 import * as yup from "yup";
@@ -190,4 +190,4 @@ const ChatInput: FC = () => {
   );
 };
 
-export default ChatInput;
+export default memo(ChatInput);

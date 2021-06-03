@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState, memo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Trash } from "react-feather";
 import Tooltip from "react-tooltip";
@@ -75,4 +75,4 @@ const ChatMessage: FC<PropTypes> = ({ message }: PropTypes) => {
   );
 };
 
-export default ChatMessage;
+export default memo(ChatMessage);

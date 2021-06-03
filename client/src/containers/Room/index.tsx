@@ -1,4 +1,4 @@
-import { FC, useState, useEffect } from "react";
+import { FC, useState, useEffect, memo } from "react";
 import { useLocation, useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -149,4 +149,4 @@ const Room: FC = () => {
   );
 };
 
-export default Room;
+export default memo(Room);
