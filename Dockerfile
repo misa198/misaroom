@@ -4,9 +4,9 @@ WORKDIR /app
 
 COPY . .
 
-RUN cd client && yarn && yarn build
+RUN cd client && npm i && npm run build
 RUN cp -r ./client/build ./server
-RUN cd server && yarn && yarn build
+RUN cd server && npm i && npm run build
 
 EXPOSE 8080
 
