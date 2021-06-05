@@ -15,6 +15,10 @@ Real time communication application created with ReactJs, NodeJs, Socket IO and 
 - Share screen
 - Chat (text and image)
 
+<p align="center">
+  <img src="./docs/images/calling.png" />
+<p>
+
 ## Install
 
 <em>
@@ -27,7 +31,7 @@ Misa Room uses [Cloudinary](https://cloudinary.com/) to store a temporary photo 
 - Run `docker-compose up --build`.
 
 <p align="center">
-<img src="./docs/images/env.png" />
+  <img src="./docs/images/env.png" />
 <p>
 
 ## License
