@@ -5,6 +5,13 @@
 
 Real time communication application created with ReactJs, NodeJs, Socket IO and Redis.
 
+<a href="https://msroom.herokuapp.com/">
+<img src="./docs/images/demo.png" />
+</a>
+
+<br />
+<br />
+
 [![Watch the video](./docs/images/screen.png)](https://i.imgur.com/jOYg8Th.mp4)
 
 ## Features
