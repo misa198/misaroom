@@ -23,7 +23,7 @@ export const CallLayoutItemAvatarVoiceDetect = styled.div`
   border-radius: 50%;
 `;
 
-export const CallLayoutItemAvatarImg = styled.div<{ src: string }>`
+export const CallLayoutItemAvatarImg = styled.img<{ src: string }>`
   width: 90%;
   height: 90%;
   background-image: url(${(props) => props.src});
